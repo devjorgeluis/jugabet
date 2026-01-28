@@ -262,6 +262,7 @@ const Layout = () => {
                     isLogin={isLogin}
                     isMobile={isMobile}
                     userBalance={userBalance}
+                    isSlotsOnly={isSlotsOnly}
                     handleLoginClick={handleLoginClick}
                     handleLogoutClick={handleLogoutClick}
                     supportParent={supportParent}
