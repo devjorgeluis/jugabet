@@ -36,7 +36,7 @@ const Layout = () => {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
-    
+
     const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
     const [gameModalData, setGameModalData] = useState({
         gameUrl: "",
@@ -47,7 +47,7 @@ const Layout = () => {
         gameLauncher: null
     });
     const refGameModal = useRef();
-    
+
     const navigate = useNavigate();
     const location = useLocation();
     const isSportsPage = location.pathname === "/sports" || location.pathname === "/live-sports";
@@ -185,11 +185,11 @@ const Layout = () => {
         setShowMobileSearch(false);
         setShouldShowGameModal(true);
         setShowFullDivLoading(true);
-        
+
         const gameId = game?.id;
         const gameName = game?.name;
         const gameImg = game?.image_local != null ? contextData.cdnUrl + game?.image_local : null;
-        
+
         setGameModalData({
             gameId: gameId,
             gameType: type,
@@ -198,14 +198,14 @@ const Layout = () => {
             gameImg: gameImg,
             gameUrl: ""
         });
-        
+
         // Fetch game URL
         callApi(contextData, "GET", "/get-game-url?game_id=" + gameId, (result) => {
             setShowFullDivLoading(false);
             if (result.status === "0") {
-                setGameModalData(prev => ({ 
-                    ...prev, 
-                    gameUrl: result.url 
+                setGameModalData(prev => ({
+                    ...prev,
+                    gameUrl: result.url
                 }));
             }
         }, null);
@@ -250,65 +250,61 @@ const Layout = () => {
             <NavigationContext.Provider
                 value={{ selectedPage, setSelectedPage, getPage, showFullDivLoading, setShowFullDivLoading }}
             >
-                <div className="w-full !overflow-x-clip h-dvh">
-                    <div className={`grid min-h-[calc(_100dvh_-_var(--pwa-prompt-height,0px))] grid-rows-[auto_1fr_auto] pb-[var(--header-bottom-height)] [grid-template-areas:_'header_header'_'nav_main'_'nav_footer'] ${isMobile ? "" : "grid-cols-[15rem_calc(100%_-_15rem)]"}`}>
-                        {showLoginModal && (
-                            <LoginModal
-                                isMobile={isMobile}
-                                isOpen={showLoginModal}
-                                onClose={() => setShowLoginModal(false)}
-                                onLoginSuccess={handleLoginSuccess}
-                            />
-                        )}
-                        <Header
-                            isLogin={isLogin}
-                            isMobile={isMobile}
-                            userBalance={userBalance}
-                            handleLoginClick={handleLoginClick}
-                            handleLogoutClick={handleLogoutClick}
-                            supportParent={supportParent}
-                            openSupportModal={openSupportModal}
-                        />
-                        {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} /> }
-                        
-                        {!shouldShowGameModal && (
-                            <div className={isLogin ? "account-background" : ""}>
-                                <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
-                            </div>
-                        )}
-                        {showMobileSearch && (
-                            <MobileSearch
-                                isLogin={isLogin}
-                                isMobile={isMobile}
-                                onClose={() => setShowMobileSearch(false)}
-                            />
-                        )}
-                        
-                        {shouldShowGameModal && gameModalData.gameId !== null && (
-                            <GameModal
-                                gameUrl={gameModalData.gameUrl}
-                                gameName={gameModalData.gameName}
-                                gameImg={gameModalData.gameImg}
-                                reload={reloadGame}
-                                launchInNewTab={() => reloadGame(null, null, "tab")}
-                                ref={refGameModal}
-                                onClose={closeGameModal}
-                                isMobile={isMobile}
-                            />
-                        )}
-                        
-                        <SupportModal
-                            isOpen={showSupportModal}
-                            onClose={closeSupportModal}
-                            supportWhatsApp={supportWhatsApp}
-                            supportTelegram={supportTelegram}
-                            supportEmail={supportEmail}
-                            supportParentOnly={supportParentOnly}
-                            supportParent={supportParent}
-                        />
-                        {isMobile && <MobileFooter isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
+                {showLoginModal && (
+                    <LoginModal
+                        isMobile={isMobile}
+                        isOpen={showLoginModal}
+                        onClose={() => setShowLoginModal(false)}
+                        onLoginSuccess={handleLoginSuccess}
+                    />
+                )}
+                <Header
+                    isLogin={isLogin}
+                    isMobile={isMobile}
+                    userBalance={userBalance}
+                    handleLoginClick={handleLoginClick}
+                    handleLogoutClick={handleLogoutClick}
+                    supportParent={supportParent}
+                    openSupportModal={openSupportModal}
+                />
+                {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} />}
+
+                {!shouldShowGameModal && (
+                    <div className={isLogin ? "account-background" : ""}>
+                        <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
                     </div>
-                </div>
+                )}
+                {showMobileSearch && (
+                    <MobileSearch
+                        isLogin={isLogin}
+                        isMobile={isMobile}
+                        onClose={() => setShowMobileSearch(false)}
+                    />
+                )}
+
+                {shouldShowGameModal && gameModalData.gameId !== null && (
+                    <GameModal
+                        gameUrl={gameModalData.gameUrl}
+                        gameName={gameModalData.gameName}
+                        gameImg={gameModalData.gameImg}
+                        reload={reloadGame}
+                        launchInNewTab={() => reloadGame(null, null, "tab")}
+                        ref={refGameModal}
+                        onClose={closeGameModal}
+                        isMobile={isMobile}
+                    />
+                )}
+
+                <SupportModal
+                    isOpen={showSupportModal}
+                    onClose={closeSupportModal}
+                    supportWhatsApp={supportWhatsApp}
+                    supportTelegram={supportTelegram}
+                    supportEmail={supportEmail}
+                    supportParentOnly={supportParentOnly}
+                    supportParent={supportParent}
+                />
+                {isMobile && <MobileFooter isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
             </NavigationContext.Provider>
         </LayoutContext.Provider>
     );

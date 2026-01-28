@@ -1,0 +1,29 @@
+.check-betslip-booking {
+    padding: 16px;
+    width: 100%
+}
+
+.check-betslip-booking__description {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    color: var(--text-subtitle);
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -.32px;
+    line-height: 20px;
+    margin: 16px 0 12px;
+    text-align: center;
+    text-transform: none
+}
+
+.check-betslip-booking__footer {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-gap: 8px;
+    height: 56px;
+    margin-top: 16px
+}

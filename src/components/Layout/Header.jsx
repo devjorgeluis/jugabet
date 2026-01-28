@@ -32,7 +32,7 @@ const Header = ({
         (result.content || []).forEach((element) => {
             element.imageDataSrc = element.image_local !== null ? contextData.cdnUrl + element.image_local : element.image_url;
         });
-    };    
+    };
 
     const search = (e) => {
         let keyword = e.target.value;
@@ -93,91 +93,139 @@ const Header = ({
     };
 
     return (
-        <header className="bg-primary-900 sticky top-0 z-[11] [grid-area:_header] border-theme-secondary/10 border-b">
-            <div className={`relative min-h-[3.5rem] flex-wrap items-center gap-2 px-4 py-3 lg:z-[100] flex`}>
-                <div className="flex items-center gap-4">
-                    {
-                        !isMobile &&
-                        <button
-                            type="button"
-                            onClick={toggleSidebar}
-                            className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold rounded-lg text-base gap-2.5 p-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center"
-                        >
-                            <img src={isSidebarExpanded ? ImgCloseMenu : ImgOpenMenu} alt="Menu toggle" style={{ width: 20 }} />
-                        </button>
-                    }
-
-                    <a onClick={() => navigate("/")} className="block lg:mr-8 cursor-pointer" title="Logo">
-                        <img src={isMobile ? ImgMobileLogo : ImgLogo} alt="Logo" />
-                    </a>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-2 flex-1 justify-end">
-                    {
-                        !isMobile &&
-                        <div className="relative w-full max-w-full flex-1">
-                            <SearchInput
-                                txtSearch={txtSearch}
-                                setTxtSearch={setTxtSearch}
-                                searchRef={searchRef}
-                                search={search}
-                                isMobile={true}
-                            />
-                        </div>
-                    }
-
-                    <button className="button-support" onClick={() => { openSupportModal(false); }}>
-                        <img src={ImgSupport} />
-                    </button>
-
-                    {isLogin ? (
-                        <>
-                            <div className="inline-flex items-center rounded-lg bg-theme-secondary-500/10 px-4 py-3 text-theme-secondary-500 font-bold">
-                                <span className="text-sm sm:text-base">$ {Number.isFinite(Number(userBalance)) ? Number(userBalance).toFixed(2) : "0.00"}</span>
-                            </div>
-
-                            <a
-                                onClick={() => navigate("/profile")}
-                                className={`cursor-pointer flex items-center gap-3 min-h-10 rounded-lg bg-theme-secondary-500/10 text-theme-secondary-500 font-bold hover:bg-theme-secondary-500/20 ${isMobile ? "p-2" : "px-4 py-3"}`}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    className="w-6 h-6"
-                                    fill="currentColor"
-                                >
-                                    <path d="M5.85 17.1q1.275-.975 2.85-1.537T12 15t3.3.563t2.85 1.537q.875-1.025 1.363-2.325T20 12q0-3.325-2.337-5.663T12 4T6.337 6.338T4 12q0 1.475.488 2.775T5.85 17.1M12 13q-1.475 0-2.488-1.012T8.5 9.5t1.013-2.488T12 6t2.488 1.013T15.5 9.5t-1.012 2.488T12 13m0 9q-2.075 0-3.9-.788t-3.175-2.137T2.788 15.9T2 12t.788-3.9t2.137-3.175T8.1 2.788T12 2t3.9.788t3.175 2.137T21.213 8.1T22 12t-.788 3.9t-2.137 3.175t-3.175 2.138T12 22m0-2q1.325 0 2.5-.387t2.15-1.113q-.975-.725-2.15-1.112T12 17t-2.5.388T7.35 18.5q.975.725 2.15 1.113T12 20m0-9q.65 0 1.075-.425T13.5 9.5t-.425-1.075T12 8t-1.075.425T10.5 9.5t.425 1.075T12 11m0 7.5" />
-                                </svg>
-                                {
-                                    !isMobile && <span>Mi cuenta</span>
-                                }
+        <header className="header" id="header-layout" data-authentificated="true" data-screen-area="navigation">
+            <div className="header__wrapper" data-id="header-wrapper">
+                <a className="header__logo" href="/">
+                    <img className="header__img" width="120px" height="56px" src="/static/iolite/layout/jbbo_logo.webp" alt="logo" data-id="logo" />
+                </a>
+                <nav className="header__nav">
+                    <ul className="header__list">
+                        <li className="header__item">
+                            <a href="/football/live/1" className="tab">
+                                <div className="tab__icon">
+                                    <svg-image url="/layout" glyph="microphone_outlined" width="24px" height="24px" fill="currentColor" data-glyph="microphone_outlined" data-active-glyph="microphone_filled" data-is-skeleton="true">
+                                    </svg-image>
+                                </div>
+                                <div className="tab__title">
+                                    <i18n-t className="tab__text" t="common-dynamic-components:Live Events" data-is-skeleton="true">Deportes en vivo</i18n-t>
+                                </div>
                             </a>
-                        </>
-                    ) : (
-                        <div className="flex items-center gap-2 ml-2">
-                            {
-                                isMobile ?
-                                    <button
-                                        type="button"
-                                        onClick={handleLoginClick}
-                                        className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis focus-visible:outline-0 font-bold rounded-lg gap-3 px-4 py-3 text-theme-secondary-500 bg-transparent ring-1 ring-inset ring-current disabled:ring-theme-secondary-500 disabled:bg-transparent disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus:outline-theme-secondary-500/20 focus:bg-theme-secondary-500/10 focus:outline focus:outline-4 hover:bg-theme-secondary-500/10 inline-flex items-center justify-center text-xs !leading-tight sm:min-h-12 sm:text-lg lg:min-w-[9.5rem]"
-                                    >
-                                        Iniciar sesión
-                                    </button>
-                                    :
-                                    <button
-                                        type="button"
-                                        onClick={handleLoginClick}
-                                        className="min-h-12 rounded-lg bg-transparent px-6 py-3 text-theme-secondary-500 font-bold ring-1 ring-theme-secondary-500 hover:bg-theme-secondary-500/10 focus-visible:ring-2 focus-visible:ring-theme-secondary-500"
-                                    >
-                                        Iniciar sesión
-                                    </button>
-                            }
-                        </div>
-                    )}
-                </div>
+                        </li>
+                        <li className="header__item">
+
+                            <a href="/football/prematch/1"  data-id="tab-upcoming-matches">
+                                <div className="tab__icon">
+
+                                    <svg-image url="/layout" glyph="sports_outlined" width="24px" height="24px" fill="currentColor" data-glyph="sports_outlined" data-active-glyph="sports_filled" data-is-skeleton="true">
+                                    </svg-image>
+
+                                </div>
+                                <div className="tab__title">
+                                    <i18n-t className="tab__text" t="common-dynamic-components:Upcoming Matches" data-is-skeleton="true">Próximos partidos</i18n-t>
+                                </div>
+                            </a>
+                        </li>
+                        <li className="header__item">
+                            <a href="/my-bets-history" className="tab">
+                                <div className="tab__icon">
+                                    <in-view module-name="open-bets-lazy-module">
+                                    </in-view>
+
+                                    <svg-image url="/layout" glyph="coupon_outlined" width="24px" height="24px" fill="currentColor" data-glyph="coupon_outlined" data-active-glyph="coupon_filled" data-is-skeleton="true">
+                                    </svg-image>
+
+                                </div>
+                                <div className="tab__title">
+                                    <i18n-t className="tab__text" t="common-dynamic-components:My bets" data-is-skeleton="true">Apuestas</i18n-t>
+                                </div>
+                            </a>
+                        </li>
+                        <li className="header__item">
+
+                            <a href="/services/lobby" className="tab
+   " data-clickstream-payload="{&quot;element_name&quot;: &quot;Casino&quot;, &quot;position_index&quot;: 3, &quot;nav_element&quot;: &quot;nav_bar&quot; }" data-id="tab-casino">
+                                <div className="tab__icon">
+
+                                    <svg-image url="/layout" glyph="chip_outlined" width="24px" height="24px" fill="currentColor" data-glyph="chip_outlined" data-active-glyph="chip_filled" data-is-skeleton="true">
+                                    </svg-image>
+
+                                </div>
+                                <div className="tab__title">
+                                    <i18n-t className="tab__text" t="common-dynamic-components:Casino" data-is-skeleton="true">Casino</i18n-t>
+                                </div>
+                            </a>
+                        </li>
+                        <li className="header__item">
+
+                            <a href="/services/live-casino" className="tab
+   " data-clickstream-payload="{&quot;element_name&quot;: &quot;Live Casino&quot;, &quot;position_index&quot;: 4, &quot;nav_element&quot;: &quot;nav_bar&quot; }" data-id="tab-live-casino">
+                                <div className="tab__icon">
+
+                                    <svg-image url="/layout" glyph="live_casino_outlined" width="24px" height="24px" fill="currentColor" data-glyph="live_casino_outlined" data-active-glyph="live_casino_filled" data-is-skeleton="true">
+                                    </svg-image>
+
+                                </div>
+                                <div className="tab__title">
+                                    <i18n-t className="tab__text" t="common-dynamic-components:Live Casino" data-is-skeleton="true">Casino en vivo</i18n-t>
+                                </div>
+                            </a>
+                        </li>
+                        <li className="header__item">
+
+                            <a href="/services/promo" className="tab
+   " data-clickstream-payload="{&quot;element_name&quot;: &quot;Promotions&quot;, &quot;position_index&quot;: 5, &quot;nav_element&quot;: &quot;nav_bar&quot; }" data-id="tab-promotions">
+                                <div className="tab__icon">
+
+                                    <svg-image url="/layout" glyph="promo_outlined" width="24px" height="24px" fill="currentColor" data-glyph="promo_outlined" data-active-glyph="promo_filled" data-is-skeleton="true">
+                                    </svg-image>
+
+                                </div>
+                                <div className="tab__title">
+                                    <i18n-t className="tab__text" t="common-dynamic-components:Promotions" data-is-skeleton="true">Promos</i18n-t>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+
+                </nav>
+                <nav className="header__user-nav">
+
+
+
+                    <div className="header__actions">
+                        <a className="header__tab" data-id="header-search-button" data-clickstream-payload="{&quot;element_name&quot;: &quot;search-icon&quot;, &quot;position_index&quot;: 0, &quot;nav_element&quot;: &quot;nav_bar&quot;}" href="/search">
+                            <span className="header__icon">
+                                <svg-image glyph="search" width="100%" height="100%" fill="currentColor" data-is-skeleton="true"></svg-image>
+                            </span>
+                        </a>
+
+                        <button className="header__tab" type="button" aria-label="Toggle notification center" data-notification-toggle="" data-clickstream-payload="{&quot;element_name&quot;: &quot;notification&quot;, &quot;position_index&quot;: 2, &quot;nav_element&quot;: &quot;nav_bar&quot; }">
+                            <span className="header__icon">
+                                <div className="header__counter counter">3</div>
+                                <svg-image glyph="notification_outline" width="100%" height="100%" fill="currentColor" data-is-skeleton="true"></svg-image>
+                            </span>
+                        </button>
+
+
+
+
+                        <a className="header__tab header__tab--flexible " data-clickstream-action="NAV_ACCOUNT_BUTTON" data-id="user-info" href="/account">
+                            <span className="header__icon">
+                                <svg-image url="/layout" glyph="my account_outlined" width="100%" height="100%" fill="currentColor" aria-label="Profile" data-is-skeleton="true">
+                                </svg-image>
+                            </span>
+                            <div className="header__group" data-currency-sign="$">
+                                <bdi className="header__label" data-player-balance-amount="" data-id="user-info-balance-amount">0.00 $</bdi>
+                            </div>
+                        </a>
+                    </div>
+
+                    <a className="button button--low button--deposit" data-id="deposit-button" data-clickstream-payload="{&quot;element_name&quot;: &quot;deposit&quot;, &quot;position_index&quot;: 0, &quot;nav_element&quot;: &quot;nav_bar&quot; }" href="/deposit">
+                        <i18n-t t="registration-section:Deposit">Depositar</i18n-t>
+                    </a>
+                </nav>
             </div>
-        </header>
+    </header >
     );
 };
 

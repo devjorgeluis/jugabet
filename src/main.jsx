@@ -1,9 +1,15 @@
 import { createRoot } from 'react-dom/client'
 import AppContextProvider from './AppContext.jsx'
 
-import './css/sidebar.css'
-import './css/default.css'
-import './css/fortunajuegos.css'
+import './css/light-blue.css'
+import './css/dark-blue.css'
+import './css/main.css'
+import './css/slider.css'
+import './css/latestBigWinsSkeleton.css'
+import './css/topWidget.css'
+import './css/footer.css'
+import './css/casinoWidgetSliders.css'
+import './css/betslipBooking.css'
 
 import App from './App.jsx'
 

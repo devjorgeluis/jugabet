@@ -4,7 +4,6 @@ import { AppContext } from "./AppContext";
 import ErrorBoundary from "./ErrorBoundary";
 import AppRoutes from "./Routes";
 import "animate.css";
-import './css/casino.css'
 
 function App() {
   const [config, setConfig] = useState({
