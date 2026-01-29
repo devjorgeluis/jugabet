@@ -13,6 +13,13 @@ import IconArrowDown from "/src/assets/svg/arrow-down.svg";
 import IconArrowUp from "/src/assets/svg/arrow-up.svg";
 import IconArrowRight from "/src/assets/svg/arrow-right.svg";
 
+import ImgCategoryHome from "/src/assets/img/lobby.webp";
+import ImgCategoryPopular from "/src/assets/img/hot.png";
+import ImgCategoryBlackjack from "/src/assets/img/joker.png";
+import ImgCategoryRoulette from "/src/assets/img/roulette.png";
+import ImgCategoryCrash from "/src/assets/img/crash.webp";
+import ImgCategoryMegaways from "/src/assets/img/megaway.png";
+
 const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handleLogoutClick }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -121,24 +128,24 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
             image: ImgCasino,
             href: "/casino",
             subItems: [
-                { name: "Lobby", href: "/casino#home" },
-                { name: "Hot", href: "/casino#hot" },
-                { name: "Jokers", href: "/casino#joker" },
-                { name: "Juegos de Crash", href: "/casino#arcade" },
-                { name: "Megaways", href: "/casino#megaways" },
-                { name: "Ruletas", href: "/casino#roulette" },
+                { name: "Lobby", href: "/casino#home", image: ImgCategoryHome },
+                { name: "Hot", href: "/casino#hot", image: ImgCategoryPopular },
+                { name: "Jokers", href: "/casino#joker", image: ImgCategoryBlackjack },
+                { name: "Juegos de Crash", href: "/casino#arcade", image: ImgCategoryCrash },
+                { name: "Megaways", href: "/casino#megaways", image: ImgCategoryMegaways },
+                { name: "Ruletas", href: "/casino#roulette", image: ImgCategoryRoulette },
             ],
-        },
-        {
-            id: "live-casino",
-            name: "Casino en Vivo",
-            image: ImgLiveCasino,
-            href: "/live-casino",
-            subItems: liveCasinoMenus,
         },
         ...(isSlotsOnlyMode
             ? []
             : [
+                {
+                    id: "live-casino",
+                    name: "Casino en Vivo",
+                    image: ImgLiveCasino,
+                    href: "/live-casino",
+                    subItems: liveCasinoMenus,
+                },
                 {
                     id: "sports",
                     name: "Deportes",
@@ -315,7 +322,16 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                                         >
                                             <div className="list-cell list-cell--transparent">
                                                 <div className="list-cell__icon">
-                                                    {/* You can add sub-item icons here if needed */}
+                                                    {
+                                                        subItem.image &&
+                                                        <img
+                                                            src={subItem.image}
+                                                            width="24px"
+                                                            height="24px"
+                                                            alt={subItem.name}
+                                                            style={{ filter: 'var(--icon-main-filter)' }}
+                                                        />
+                                                    }
                                                 </div>
                                                 <div className="list-cell__left">
                                                     <div className="list-cell__double">

@@ -261,8 +261,8 @@ main[role=main].loading {
         -moz-column-gap: 40px;
         column-gap: 40px;
         display: grid;
-        grid-template-areas: "left center";
-        grid-template-columns: 320px 1fr;
+        grid-template-areas: "left center right";
+        grid-template-columns: 320px 1fr 320px;
         height: var(--screen-height);
         padding-bottom: 0;
         padding-right: 30px;
@@ -3623,6 +3623,7 @@ details summary::-webkit-details-marker {
     letter-spacing: -.24px;
     line-height: 14px;
     text-align: center;
+    cursor: pointer;
     text-transform: none
 }
 
@@ -3822,7 +3823,7 @@ details summary::-webkit-details-marker {
     padding-block-end: 4px;
     -webkit-padding-start: 8px;
     overflow-x: auto;
-    padding-inline-start: 8px
+    padding-inline-start: 8px;
 }
 
 .qabs--rectangle {
@@ -6167,4 +6168,59 @@ svg-image::part(skeleton) {
     .games-vertodos i {
         font-size: 16px;
     }
+}
+
+.qab {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    width: 64px;
+    cursor: pointer;
+    margin: auto;
+}
+
+.qab__visual {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background-color: var(--background-main);
+    border: 2px solid var(--section-blue-light);
+    border-radius: 100%;
+    -webkit-transition: background-color .3s ease, border-color .3s ease;
+    transition: background-color .3s ease, border-color .3s ease;
+}
+
+.qab__text {
+    display: -webkit-box;
+    margin-top: 4px;
+    overflow: hidden;
+    color: var(--text-body);
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    -webkit-transition: color .3s ease;
+    transition: color .3s ease;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    text-transform: none;
+    letter-spacing: -.3px;
 }
