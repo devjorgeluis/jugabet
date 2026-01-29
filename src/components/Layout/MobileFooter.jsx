@@ -6,12 +6,11 @@ import { callApi } from "../../utils/Utils";
 import ImgCasino from "/src/assets/svg/casino.svg";
 import ImgLiveCasino from "/src/assets/svg/live-casino.svg";
 import ImgSports from "/src/assets/svg/sports.svg";
-import ImgMobileCasino from "/src/assets/svg/mobile-casino.svg";
-import ImgMobileLiveCasino from "/src/assets/svg/mobile-live-casino.svg";
-import ImgMobileSports from "/src/assets/svg/mobile-sports.svg";
+// import ImgMobileCasino from "/src/assets/svg/mobile-casino.svg";
+// import ImgMobileLiveCasino from "/src/assets/svg/mobile-live-casino.svg";
+// import ImgMobileSports from "/src/assets/svg/mobile-sports.svg";
 import ImgProfile from "/src/assets/svg/profile.svg";
 import ImgLogout from "/src/assets/svg/logout.svg";
-import ImgPhone from "/src/assets/svg/phone.svg";
 import ImgMenu from "/src/assets/svg/menu.svg";
 import ImgClose from "/src/assets/svg/close.svg";
 
@@ -231,9 +230,6 @@ const MobileFooter = ({
                                 onClick={handleNavigation({ href: "/sports" })}
                                 className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
                             >
-                                <div className="p-1">
-                                    <img src={ImgMobileSports} alt="Deportes" className="h-5 w-5" />
-                                </div>
                                 <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
                                     Deportes
                                 </span>

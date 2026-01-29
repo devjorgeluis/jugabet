@@ -300,18 +300,18 @@ const Home = () => {
           ) : (
             <>
               <Slideshow />
+              <ProviderContainer
+                categories={categories}
+                selectedProvider={selectedProvider}
+                setSelectedProvider={setSelectedProvider}
+                onProviderSelect={handleProviderSelect}
+              />
               <PopularGames
                 games={topGames}
                 title="Juegos Populares"
                 onGameClick={(game) =>
                   isLogin ? launchGame(game) : setShowLoginModal(true)
                 }
-              />
-              <ProviderContainer
-                categories={categories}
-                selectedProvider={selectedProvider}
-                setSelectedProvider={setSelectedProvider}
-                onProviderSelect={handleProviderSelect}
               />
             </>
           )}

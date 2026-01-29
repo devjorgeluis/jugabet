@@ -10,8 +10,6 @@ import LoginModal from "../Modal/LoginModal";
 import SupportModal from "../Modal/SupportModal";
 import { NavigationContext } from "./NavigationContext";
 import FullDivLoading from "../Loading/FullDivLoading";
-import MobileSearch from "../MobileSearch";
-import MobileFooter from "./MobileFooter";
 import GameModal from "../Modal/GameModal";
 
 const Layout = () => {
@@ -288,17 +286,6 @@ const Layout = () => {
                     </div>
                 </div>
 
-                
-
-                
-                {showMobileSearch && (
-                    <MobileSearch
-                        isLogin={isLogin}
-                        isMobile={isMobile}
-                        onClose={() => setShowMobileSearch(false)}
-                    />
-                )}
-
                 {shouldShowGameModal && gameModalData.gameId !== null && (
                     <GameModal
                         gameUrl={gameModalData.gameUrl}
@@ -321,7 +308,6 @@ const Layout = () => {
                     supportParentOnly={supportParentOnly}
                     supportParent={supportParent}
                 />
-                {isMobile && <MobileFooter isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
             </NavigationContext.Provider>
         </LayoutContext.Provider>
     );
