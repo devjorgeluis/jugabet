@@ -216,3 +216,127 @@
         background-position: 0 50%
     }
 }
+
+.menu {
+    background-color: rgba(0,0,0,0);
+    display: none;
+    height: calc(var(--screen-height) - 57px);
+    inset-inline-start: 0;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    -webkit-transition: -webkit-transform .3s ease;
+    transition: -webkit-transform .3s ease;
+    transition: transform .3s ease;
+    transition: transform .3s ease,-webkit-transform .3s ease;
+    width: 100%;
+    z-index: 70
+}
+
+.menu__header {
+    position: sticky;
+    top: 0;
+    z-index: 2
+}
+
+.menu__wrapper {
+    background-color: var(--background-main);
+    height: calc(var(--screen-height) - 113px);
+    overflow-y: auto
+}
+
+.menu__account {
+    padding-block:16px}
+
+.menu__account,.menu__item {
+    border-bottom: 1px solid var(--divider-main)
+}
+
+.menu__item {
+    cursor: pointer;
+    display: block
+}
+
+.menu__item--expanded .menu__chevron {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg)
+}
+
+.menu__item--expanded .menu__expansion-panel {
+    display: block
+}
+
+.menu__list-cell {
+    padding-inline:28px 12px}
+
+.menu__chevron {
+    -webkit-transition: -webkit-transform .3s ease;
+    transition: -webkit-transform .3s ease;
+    transition: transform .3s ease;
+    transition: transform .3s ease,-webkit-transform .3s ease
+}
+
+.menu__expansion-panel {
+    display: none;
+    padding-top: 0
+}
+
+.menu--visible {
+    display: block
+}
+
+.menu--active {
+    -webkit-transform: translateX(0)!important;
+    -ms-transform: translateX(0)!important;
+    transform: translateX(0)!important
+}
+
+@media (max-width: 1279px) {
+    .menu {
+        -webkit-transform:translateX(-100%);
+        -ms-transform: translateX(-100%);
+        transform: translateX(-100%)
+    }
+
+    :host([dir=rtl]) .menu,[dir=rtl] .menu {
+        -webkit-transform: translateX(100%);
+        -ms-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+
+    :global(html[dir=rtl]) .menu {
+        -webkit-transform: translateX(100%);
+        -ms-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+
+    :host-context([dir=rtl]) .menu {
+        -webkit-transform: translateX(100%);
+        -ms-transform: translateX(100%);
+        transform: translateX(100%)
+    }
+}
+
+@media (min-width: 1280px) {
+    .menu {
+        background-color:var(--background-main);
+        position: relative;
+        -webkit-transform: none;
+        -ms-transform: none;
+        transform: none;
+        z-index: auto
+    }
+
+    .menu__wrapper {
+        height: calc(var(--screen-height) - 56px)
+    }
+
+    .menu--active,.menu__account,.menu__header {
+        display: none
+    }
+
+    [data-section=layout-menu] .menu {
+        display: block
+    }
+}

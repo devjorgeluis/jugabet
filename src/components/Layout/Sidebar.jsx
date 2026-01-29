@@ -3,12 +3,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
-import ImgCasino from "/src/assets/svg/casino.svg";
-import ImgLiveCasino from "/src/assets/svg/live-casino.svg";
-import ImgSports from "/src/assets/svg/sports.svg";
+import ImgCasino from "/src/assets/svg/blue-casino.svg";
+import ImgLiveCasino from "/src/assets/svg/blue-live-casino.svg";
+import ImgSports from "/src/assets/svg/blue-sports.svg";
 import ImgProfile from "/src/assets/svg/profile.svg";
 import ImgLogout from "/src/assets/svg/logout.svg";
 import ImgPhone from "/src/assets/svg/phone.svg";
+import IconArrowDown from "/src/assets/svg/arrow-down.svg";
+import IconArrowUp from "/src/assets/svg/arrow-up.svg";
+import IconArrowRight from "/src/assets/svg/arrow-right.svg";
 
 const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handleLogoutClick }) => {
     const navigate = useNavigate();
@@ -40,7 +43,6 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
 
     const isMenuExpanded = (menuId) => expandedMenus.includes(menuId);
 
-    // Fetch live casino categories
     useEffect(() => {
         if (!hasFetchedLiveCasino) {
             callApi(contextData, "GET", "/get-page?page=livecasino", (result) => {
@@ -219,150 +221,144 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
         return location.pathname === href;
     };
 
+    // Render menu items from the menuItems array
+    const renderMenuItems = () => {
+        return menuItems.map((item) => {
+            const isExpanded = isMenuExpanded(item.id);
+            const isActive = isMenuActive(item);
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+            
+            if (!hasSubItems) {
+                return (
+                    <div
+                        key={item.id}
+                        className={`menu__item ${isActive ? 'menu__item--active' : ''}`}
+                        data-id={`menu-list-items-${item.id}`}
+                        onClick={handleNavigation(item)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="menu__list-cell list-cell list-cell--transparent">
+                            <div className="list-cell__icon">
+                                <img
+                                    src={item.image}
+                                    width="24px"
+                                    height="24px"
+                                    alt={item.name}
+                                    style={{ filter: 'var(--icon-main-filter)' }}
+                                />
+                            </div>
+                            <div className="list-cell__left">
+                                <div className="list-cell__double">
+                                    <span className="list-cell__title body-regular">
+                                        {item.name}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="list-cell__right">
+                                <img src={IconArrowRight} alt="arrow" />                                
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div
+                    key={item.id}
+                    className={`menu__item ${isExpanded ? 'menu__item--expanded' : ''} ${isActive ? 'menu__item--active' : ''}`}
+                    data-id={`menu-list-items-${item.id}`}
+                >
+                    <div
+                        className="menu__list-cell list-cell list-cell--transparent"
+                        onClick={() => toggleMenu(item.id)}
+                        onMouseEnter={(e) => handleMouseEnter(item.id, e)}
+                        onMouseLeave={handleMouseLeave}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="list-cell__icon">
+                            <img
+                                src={item.image}
+                                width="24px"
+                                height="24px"
+                                alt={item.name}
+                                style={{ filter: 'var(--icon-main-filter)' }}
+                            />
+                        </div>
+                        <div className="list-cell__left">
+                            <div className="list-cell__double">
+                                <span className="list-cell__title body-regular">
+                                    {item.name}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="list-cell__right">
+                            <img 
+                                src={isExpanded ? IconArrowDown : IconArrowUp} 
+                                alt={isExpanded ? "arrow-down" : "arrow-up"}
+                                className="menu__chevron"
+                            />
+                        </div>
+                    </div>
+
+                    {isExpanded && hasSubItems && (
+                        <div className="menu__expansion-panel list-view" data-id={`menu-list-${item.id}-category`}>
+                            <ul className="list-view__layout">
+                                {item.subItems.map((subItem, index) => (
+                                    <li key={`${item.id}-${index}`} className="list-view__item list-view__item--icon">
+                                        <a 
+                                            href={subItem.href} 
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                navigate(subItem.href);
+                                            }}
+                                            className={isActiveSubmenu(subItem.href) ? 'active' : ''}
+                                        >
+                                            <div className="list-cell list-cell--transparent">
+                                                <div className="list-cell__icon">
+                                                    {/* You can add sub-item icons here if needed */}
+                                                </div>
+                                                <div className="list-cell__left">
+                                                    <div className="list-cell__double">
+                                                        <span className={`list-cell__title body-regular ${isActiveSubmenu(subItem.href) ? 'active' : ''}`}>
+                                                            {subItem.name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="list-cell__right">
+                                                    <img src={IconArrowRight} alt="arrow" />
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        });
+    };
+
     return (
         <>
-            <aside
-                id="aside"
-                className={`bg-primary-900 text-primary-50 border-theme-secondary/10 z-50 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] sticky top-[var(--header-height)] max-h-[calc(100svh-var(--header-height))] min-h-[unset] lg:max-w-[15rem] ${isSidebarExpanded ? "w-[16rem]" : "w-[4.25rem]"
-                    }`}
-            >
-                <div className="w-full !overflow-x-clip h-full px-2 pb-0 pt-2 sm:p-12 sm:pb-0 sm:px-2 sm:pt-2">
-                    <div className="w-full h-full relative">
-                        <nav className="flex flex-col gap-2">
-                            {menuItems.map((item) => {
-                                const itemRef = (el) => (iconRefs.current[item.id] = el);
-                                const isActive = isMenuActive(item);
+            <div className="menu__wrapper">
+                {renderMenuItems()}
+            </div>
 
-                                if (!isSidebarExpanded) {
-                                    return (
-                                        <div
-                                            key={item.id}
-                                            className="group relative"
-                                            ref={itemRef}
-                                            onMouseEnter={(e) => handleMouseEnter(item.id, e)}
-                                            onMouseLeave={handleMouseLeave}
-                                        >
-                                            <button
-                                                onClick={handleNavigation(item)}
-                                                className={`text-theme-secondary ring-theme-secondary/10 flex aspect-square w-full items-center justify-center gap-2.5 rounded-2xl p-4 ring-1 transition duration-75 hover:ring-theme-secondary hover:cursor-pointer ${isActive ? "bg-theme-secondary/20" : "bg-transparent"
-                                                    }`}
-                                            >
-                                                <img src={item.image} alt={item.name} className="h-5 w-5" />
-                                            </button>
-                                        </div>
-                                    );
-                                }
-
-                                // Expanded mode
-                                return (
-                                    <div key={item.id} className="relative">
-                                        <div className="[&>[data-state='open']]:bg-theme-secondary/10 [&>[data-state='open']]:ring-1 flex flex-col gap-2 border-theme-secondary/10 w-full rounded-2xl border p-0 hover:border-theme-secondary/20 hover:bg-theme-secondary/[0.02] [&>[data-state='open']]:ring-theme-secondary/20">
-                                            <div
-                                                data-state={isMenuExpanded(item.id) ? "open" : "closed"}
-                                                className="relative flex w-full flex-col rounded-2xl transition-all"
-                                            >
-                                                <div
-                                                    className="flex items-center justify-between gap-2 pr-4 transition duration-75"
-                                                    // Only toggle expand if it has subItems
-                                                    {...(item.subItems.length > 0 ? { onClick: () => toggleMenu(item.id) } : {})}
-                                                >
-                                                    <button
-                                                        onClick={handleNavigation(item)}
-                                                        className="aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 max-w-full text-ellipsis ring-0 focus:outline-none focus-visible:outline-0 rounded-lg gap-4 inline-flex items-center justify-center flex-1 py-4 pl-4 text-sm font-bold !leading-tight transition-all lg:text-xs"
-                                                    >
-                                                        <span className="flex w-full items-center gap-2 text-left">
-                                                            <img src={item.image} alt={item.name} className="h-5 w-5" />
-                                                            <span className="uppercase text-theme-secondary-50">
-                                                                {item.name}
-                                                            </span>
-                                                        </span>
-                                                    </button>
-
-                                                    {item.subItems.length > 0 && (
-                                                        <svg
-                                                            className={`cursor-pointer h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""
-                                                                }`}
-                                                            viewBox="0 0 24 24"
-                                                            fill="none"
-                                                            stroke="currentColor"
-                                                            strokeWidth="2"
-                                                        >
-                                                            <path d="m6 9 6 6 6-6" />
-                                                        </svg>
-                                                    )}
-                                                </div>
-
-                                                {/* Submenu */}
-                                                {item.subItems.length > 0 && (
-                                                    <div
-                                                        className="overflow-hidden"
-                                                        style={{ display: isMenuExpanded(item.id) ? "block" : "none" }}
-                                                    >
-                                                        <div className="rounded-b-2xl bg-transparent p-0">
-                                                            <div className="flex flex-col gap-1 px-2 pb-2 pt-1">
-                                                                {item.subItems.map((sub) => (
-                                                                    <button
-                                                                        key={sub.href}
-                                                                        onClick={handleNavigation({ href: sub.href })}
-                                                                        className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal !leading-tight text-white hover:bg-theme-secondary/5 hover:text-white lg:text-sm ${isActiveSubmenu(sub.href)
-                                                                                ? "bg-theme-secondary/10 text-theme-secondary"
-                                                                                : ""
-                                                                            }`}
-                                                                    >
-                                                                        <span>{sub.name}</span>
-                                                                        {sub.name === "Hot" && (
-                                                                            <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
-                                                                                POPULARES
-                                                                            </span>
-                                                                        )}
-                                                                    </button>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </nav>
-                    </div>
-                </div>
-            </aside>
-
-            {/* Popover for collapsed mode */}
-            {isPopoverVisible && hoveredMenu && !isSidebarExpanded && (
+            {!isSidebarExpanded && isPopoverVisible && hoveredMenu && (
                 <div
                     ref={popoverRef}
-                    className="fixed z-[100] min-w-[15rem] rounded-2xl bg-theme-primary-950 p-4 shadow-2xl ring-1 ring-theme-secondary/10 transition-opacity"
-                    style={{ top: popoverPosition.top, left: popoverPosition.left }}
+                    className="menu-popover"
+                    style={{
+                        position: 'absolute',
+                        top: `${popoverPosition.top}px`,
+                        left: `${popoverPosition.left}px`,
+                        zIndex: 1000,
+                    }}
                     onMouseEnter={handlePopoverMouseEnter}
                     onMouseLeave={handlePopoverMouseLeave}
                 >
-                    <button
-                        onClick={handleNavigation(menuItems.find((i) => i.id === hoveredMenu))}
-                        className="pb-2 text-lg font-bold uppercase text-theme-secondary-50 hover:text-white"
-                    >
-                        {menuItems.find((i) => i.id === hoveredMenu)?.name}
-                    </button>
-
-                    {menuItems
-                        .find((i) => i.id === hoveredMenu)
-                        ?.subItems.map((sub) => (
-                            <button
-                                key={sub.href}
-                                onClick={handleNavigation({ href: sub.href })}
-                                className="block w-full rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 hover:text-white lg:text-sm"
-                            >
-                                <span>{sub.name}</span>
-                                {sub.name === "Hot" && (
-                                    <span className="ml-2 rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
-                                        POPULARES
-                                    </span>
-                                )}
-                            </button>
-                        ))}
+                    {/* Popover content for the hovered menu */}
                 </div>
             )}
         </>

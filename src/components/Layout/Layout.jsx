@@ -268,7 +268,25 @@ const Layout = () => {
                     supportParent={supportParent}
                     openSupportModal={openSupportModal}
                 />
-                {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} />}
+
+                <div className="main">
+                    <div className="layout">
+                        <div className="layout__left">
+                            <div data-section="layout-menu">
+                                <div className="menu" id="menu">
+                                    {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} />}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="layout__center">
+                            <div className="main-page">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
 
                 {!shouldShowGameModal && (
                     <div className={isLogin ? "account-background" : ""}>
