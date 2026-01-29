@@ -340,3 +340,9 @@
         display: block
     }
 }
+
+
+.swiper-slide {
+    height: auto;
+    cursor: pointer;
+}
