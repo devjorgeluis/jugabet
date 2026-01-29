@@ -4,11 +4,9 @@ import { AppContext } from "../AppContext";
 import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
-import DropWins from "../components/Home/DropWins";
+import Slideshow from "../components/Home/Slideshow"
 import PopularGames from "../components/Layout/PopularGames";
-import GameCategories from "../components/Home/GameCategories";
 import ProviderContainer from "../components/ProviderContainer";
-import Promotions from "../components/Home/Promotions";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
 import Footer from "../components/Layout/Footer";
@@ -16,14 +14,14 @@ import GameCard from "../components/GameCard";
 import LoadGames from "../components/Loading/LoadGames";
 import "animate.css";
 
-import ImgCategoryBackground1 from "/src/assets/img/category-background1.webp";
-import ImgCategoryBackground2 from "/src/assets/img/category-background2.webp";
-import ImgCategoryBackground3 from "/src/assets/img/category-background3.webp";
-import ImgCategoryBackground4 from "/src/assets/img/category-background4.webp";
-import ImgCategory1 from "/src/assets/img/category1.webp";
-import ImgCategory2 from "/src/assets/img/category2.webp";
-import ImgCategory3 from "/src/assets/img/category3.webp";
-import ImgCategory4 from "/src/assets/img/category4.webp";
+// import ImgCategoryBackground1 from "/src/assets/img/category-background1.webp";
+// import ImgCategoryBackground2 from "/src/assets/img/category-background2.webp";
+// import ImgCategoryBackground3 from "/src/assets/img/category-background3.webp";
+// import ImgCategoryBackground4 from "/src/assets/img/category-background4.webp";
+// import ImgCategory1 from "/src/assets/img/category1.webp";
+// import ImgCategory2 from "/src/assets/img/category2.webp";
+// import ImgCategory3 from "/src/assets/img/category3.webp";
+// import ImgCategory4 from "/src/assets/img/category4.webp";
 
 let selectedGameId = null;
 let selectedGameType = null;
@@ -89,17 +87,17 @@ const Home = () => {
     const isSlotsOnlyFalse = isSlotsOnly === false || isSlotsOnly === "false";
     setTags(
       isSlotsOnlyFalse
-        ? [
-          { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
-          { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
-          { name: "Juegos de crash", code: "arcade", image: ImgCategory3, backgroundImage: ImgCategoryBackground3 },
-          { name: "Ruletas", code: "roulette", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
-        ]
-        : [
-          { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
-          { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
-          { name: "Megaways", code: "megaways", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
-        ]
+        // ? [
+        //   { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
+        //   { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
+        //   { name: "Juegos de crash", code: "arcade", image: ImgCategory3, backgroundImage: ImgCategoryBackground3 },
+        //   { name: "Ruletas", code: "roulette", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
+        // ]
+        // : [
+        //   { name: "Populares", code: "hot", image: ImgCategory1, backgroundImage: ImgCategoryBackground1 },
+        //   { name: "Jokers", code: "joker", image: ImgCategory2, backgroundImage: ImgCategoryBackground2 },
+        //   { name: "Megaways", code: "megaways", image: ImgCategory4, backgroundImage: ImgCategoryBackground4 },
+        // ]
     );
   }, [isSlotsOnly]);
 
@@ -252,93 +250,74 @@ const Home = () => {
       )}
 
       {!shouldShowGameModal && (
-        <div className="overflow-x-hidden [grid-area:main] pt-4">
-          <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
-            <div className="max-w-[100vw] [grid-area:main-column]">
+        <>
+          {selectedProvider ? (
+            <div className="flex flex-col gap-6 pb-10">
               <div className="flex flex-col gap-4">
-                <div className="gap-4 container md:grid md:grid-cols-1">
-                  <div className="flex flex-col">
-                    {selectedProvider ? (
-                      <div className="flex flex-col gap-6 pb-10">
-                        <div className="flex flex-col gap-4">
-                          {selectedProvider.image_local || selectedProvider.image_url ? (
-                            <img
-                              src={
-                                selectedProvider.image_local
-                                  ? contextData.cdnUrl + selectedProvider.image_local
-                                  : selectedProvider.image_url
-                              }
-                              alt={selectedProvider.name}
-                              className="w-32 object-contain"
-                              loading="eager"
-                            />
-                          ) : null}
-                          <h1 className="text-3xl font-bold text-white">{selectedProvider.name}</h1>
-                        </div>
+                {(selectedProvider.image_local || selectedProvider.image_url) && (
+                  <img
+                    src={
+                      selectedProvider.image_local
+                        ? contextData.cdnUrl + selectedProvider.image_local
+                        : selectedProvider.image_url
+                    }
+                    alt={selectedProvider.name}
+                    className="w-32 object-contain"
+                    loading="eager"
+                  />
+                )}
 
-                        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                          {games.map((game) => (
-                            <GameCard
-                              key={game.id}
-                              id={game.id}
-                              provider={selectedProvider.name}
-                              title={game.name}
-                              imageSrc={game.imageDataSrc}
-                              onClick={() => (isLogin ? launchGame(game) : setShowLoginModal(true))}
-                            />
-                          ))}
-                          {isLoadingGames && <LoadGames />}
-                        </div>
+                <h1 className="text-3xl font-bold text-white">
+                  {selectedProvider.name}
+                </h1>
+              </div>
 
-                        <div className="flex justify-center mt-8">
-                          <button
-                            onClick={loadMoreGames}
-                            className="rounded-lg bg-theme-secondary-500/10 px-8 py-3 font-bold text-theme-secondary-500 hover:bg-theme-secondary-500/20"
-                          >
-                            Cargar más
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <DropWins />
-                        <PopularGames
-                          games={topGames}
-                          title="Juegos Populares"
-                          onGameClick={(game) => (isLogin ? launchGame(game) : setShowLoginModal(true))}
-                        />
-                        <GameCategories
-                          categories={tags}
-                          selectedCategoryIndex={selectedCategoryIndex}
-                          onCategoryClick={(tag, _id, _table, index) => {
-                            if (window.location.hash !== `#${tag.code}`) {
-                              window.location.hash = `#${tag.code}`;
-                            } else {
-                              setSelectedCategoryIndex(index);
-                              getPage(tag.code);
-                            }
-                          }}
-                          onCategorySelect={() => setSelectedProvider(null)}
-                          isMobile={isMobile}
-                          pageType="home"
-                        />
-                        <ProviderContainer
-                          categories={categories}
-                          selectedProvider={selectedProvider}
-                          setSelectedProvider={setSelectedProvider}
-                          onProviderSelect={handleProviderSelect}
-                        />
-                        <Promotions />
-                      </>
-                    )}
+              <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                {games.map((game) => (
+                  <GameCard
+                    key={game.id}
+                    id={game.id}
+                    provider={selectedProvider.name}
+                    title={game.name}
+                    imageSrc={game.imageDataSrc}
+                    onClick={() =>
+                      isLogin ? launchGame(game) : setShowLoginModal(true)
+                    }
+                  />
+                ))}
+                {isLoadingGames && <LoadGames />}
+              </div>
 
-                    <Footer />
-                  </div>
-                </div>
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={loadMoreGames}
+                  className="rounded-lg bg-theme-secondary-500/10 px-8 py-3 font-bold text-theme-secondary-500 hover:bg-theme-secondary-500/20"
+                >
+                  Cargar más
+                </button>
               </div>
             </div>
-          </div>
-        </div>
+          ) : (
+            <>
+              <Slideshow />
+              <PopularGames
+                games={topGames}
+                title="Juegos Populares"
+                onGameClick={(game) =>
+                  isLogin ? launchGame(game) : setShowLoginModal(true)
+                }
+              />
+              <ProviderContainer
+                categories={categories}
+                selectedProvider={selectedProvider}
+                setSelectedProvider={setSelectedProvider}
+                onProviderSelect={handleProviderSelect}
+              />
+            </>
+          )}
+
+          <Footer />
+        </>
       )}
     </>
   );

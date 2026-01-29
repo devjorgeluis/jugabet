@@ -1,5 +1,5 @@
-import Img18 from "/src/assets/img/18.webp";
-import ImgGCB from "/src/assets/svg/GCB.svg";
+// import Img18 from "/src/assets/img/18.webp";
+// import ImgGCB from "/src/assets/svg/GCB.svg";
 import ImgFactory from "/src/assets/svg/engage-factory-logo.svg";
 
 const Footer = () => {
@@ -28,12 +28,12 @@ const Footer = () => {
                                 className="group flex items-center gap-6"
                             >
                                 <picture className="contents">
-                                    <img
+                                    {/* <img
                                         src={Img18}
                                         alt="18+"
                                         className="max-h-11 min-w-11 group-even:w-full"
                                         loading="lazy"
-                                    />
+                                    /> */}
                                 </picture>
                                 <p className="text-dark-grey-50 text-xs !leading-tight">
                                     Debe tener 18 años o más para usar fortunajuegos.com
@@ -46,12 +46,12 @@ const Footer = () => {
                                 className="group flex items-center gap-6"
                             >
                                 <picture className="contents">
-                                    <img
+                                    {/* <img
                                         src={ImgGCB}
                                         alt="CiL"
                                         className="max-h-11 min-w-11 group-even:w-full"
                                         loading="lazy"
-                                    />
+                                    /> */}
                                 </picture>
                             </a>
                         </div>

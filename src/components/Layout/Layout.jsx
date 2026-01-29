@@ -280,7 +280,9 @@ const Layout = () => {
                         </div>
                         <div className="layout__center">
                             <div className="main-page">
-
+                                {!shouldShowGameModal && (
+                                    <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
+                                )}
                             </div>
                         </div>
                     </div>
@@ -288,11 +290,7 @@ const Layout = () => {
 
                 
 
-                {!shouldShowGameModal && (
-                    <div className={isLogin ? "account-background" : ""}>
-                        <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
-                    </div>
-                )}
+                
                 {showMobileSearch && (
                     <MobileSearch
                         isLogin={isLogin}

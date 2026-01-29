@@ -1,5 +1,5 @@
-import ImgLiveCasinoHeroImg from "/src/assets/img/live-casino-hero-image.webp";
-import ImgLiveCasinoHeroBackgroundImg from "/src/assets/img/live-casino-hero-background-image.webp";
+// import ImgLiveCasinoHeroImg from "/src/assets/img/live-casino-hero-image.webp";
+// import ImgLiveCasinoHeroBackgroundImg from "/src/assets/img/live-casino-hero-background-image.webp";
 
 const Hero = () => {
     return (
@@ -14,13 +14,13 @@ const Hero = () => {
                 <div className="group w-full rounded-3xl hover:shadow-games-tile-hover">
                     <div className="bg-primary relative grid h-full w-full grid-cols-12 overflow-hidden rounded-3xl sm:min-h-[30rem]">
                         <picture className="contents">
-                            <img
+                            {/* <img
                                 src={ImgLiveCasinoHeroBackgroundImg}
                                 alt="Treasure Island"
                                 className="absolute inset-0 h-full w-full object-cover"
                                 loading="eager"
                                 fetchPriority="high"
-                            />
+                            /> */}
                         </picture>
 
                         <div className="relative z-[1] order-1 col-span-12 flex flex-1 flex-col gap-4 py-4 pl-4 pr-0 text-left sm:col-span-5 sm:py-8 sm:pl-8 lg:col-span-6">
@@ -44,13 +44,13 @@ const Hero = () => {
 
                         <div className="relative order-2 col-span-12 aspect-auto flex-1 self-stretch overflow-hidden rounded-r-3xl [mask-image:linear-gradient(to_right,transparent,#000)] sm:col-span-7 lg:col-span-6">
                             <picture className="contents">
-                                <img
+                                {/* <img
                                     src={ImgLiveCasinoHeroImg}
                                     alt="Drops y Wins promotional graphic"
                                     className="absolute inset-0 h-full w-full max-w-none rounded-r-3xl object-cover transition-transform duration-500 group-hover:scale-105"
                                     loading="eager"
                                     fetchPriority="high"
-                                />
+                                /> */}
                             </picture>
                         </div>
 

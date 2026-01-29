@@ -261,10 +261,11 @@ main[role=main].loading {
         -moz-column-gap: 40px;
         column-gap: 40px;
         display: grid;
-        grid-template-areas: "left center right";
-        grid-template-columns: 320px 1fr 320px;
+        grid-template-areas: "left center";
+        grid-template-columns: 320px 1fr;
         height: var(--screen-height);
-        padding-bottom: 0
+        padding-bottom: 0;
+        padding-right: 30px;
     }
 
     .layout__left {
@@ -3862,6 +3863,12 @@ details summary::-webkit-details-marker {
 
 .promo-bar__slider {
     min-height: 152px
+}
+
+@media (max-width: 768px) {
+    .promo-bar__slider {
+        min-height: auto
+    }
 }
 
 @media (min-width:1280px) {

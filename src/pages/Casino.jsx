@@ -10,7 +10,6 @@ import GameModal from "../components/Modal/GameModal";
 import Hero from "../components/Casino/Hero";
 import PopularGames from "../components/Layout/PopularGames";
 import ProviderContainer from "../components/ProviderContainer";
-import Promotions from "../components/Home/Promotions";
 import Footer from "../components/Layout/Footer";
 import LoadGames from "../components/Loading/LoadGames";
 import SearchInput from "../components/SearchInput";
@@ -472,7 +471,6 @@ const Casino = () => {
                           setSelectedProvider={setSelectedProvider}
                           onProviderSelect={handleProviderSelect}
                         />
-                        {isLobbySelected && <Promotions />}
 
                         <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content'] pb-6 pt-10 sm:pb-12 sm:pt-16">
                           <h1 className="mb-6 flex flex-col gap-4 text-4xl font-bold -tracking-[0.6px] text-white [grid-area:heading] sm:mb-12 sm:flex-row sm:items-center sm:gap-6 sm:-tracking-[0.72px]">

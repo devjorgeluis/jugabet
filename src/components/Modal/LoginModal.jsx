@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from "react";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
-import ImgLogin from "/src/assets/img/login.webp"; 
-import ImgMobileLogin from "/src/assets/img/mobile-login.webp"; 
+// import ImgLogin from "/src/assets/img/login.webp"; 
+// import ImgMobileLogin from "/src/assets/img/mobile-login.webp"; 
 
 const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
     const { contextData, updateSession } = useContext(AppContext);
@@ -84,7 +84,7 @@ const LoginModal = ({ isOpen, onClose, onLoginSuccess, isMobile }) => {
                             <picture className="contents">
                                 <img
                                     className="h-full w-full object-cover lg:absolute lg:rounded-bl-3xl lg:rounded-tl-3xl"
-                                    src={isMobile ? ImgMobileLogin : ImgLogin}
+                                    // src={isMobile ? ImgMobileLogin : ImgLogin}
                                     alt="Login background"
                                     loading="lazy"
                                 />
