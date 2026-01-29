@@ -6329,7 +6329,8 @@ svg-image::part(skeleton) {
     transform: translate(-50%,-50%);
     -webkit-transition: opacity .3s ease;
     transition: opacity .3s ease;
-    z-index: 2
+    z-index: 2;
+    cursor: pointer;
 }
 
 :host([dir=rtl]) .game-card__button,[dir=rtl] .game-card__button {
@@ -6783,4 +6784,12 @@ svg-image::part(skeleton) {
 
 .swiper-container {
     position: relative;
+}
+
+.text-center {
+    text-align: center;
+}
+
+a {
+    cursor: pointer;
 }

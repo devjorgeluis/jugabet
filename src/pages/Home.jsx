@@ -1,5 +1,5 @@
 import { useContext, useState, useEffect, useRef } from "react";
-import { useOutletContext, useLocation } from "react-router-dom";
+import { useOutletContext, useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "../AppContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
@@ -9,7 +9,6 @@ import ProviderContainer from "../components/ProviderContainer";
 import HotGameSlideshow from "../components/Home/HotGameSlideshow";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
-import SearchInput from "../components/SearchInput";
 import GameCard from "../components/GameCard";
 import LoadApi from "../components/Loading/LoadApi";
 
@@ -39,30 +38,23 @@ const Home = () => {
   const [topLiveCasino, setTopLiveCasino] = useState([]);
   const [categories, setCategories] = useState([]);
   const [mainCategories, setMainCategories] = useState([]);
-  const [firstFiveCategoriesGames, setFirstFiveCategoriesGames] = useState([]);
   const [activeCategory, setActiveCategory] = useState({});
   const [categoryType, setCategoryType] = useState("");
-  const [txtSearch, setTxtSearch] = useState("");
-  const [searchDelayTimer, setSearchDelayTimer] = useState();
   const [tags, setTags] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState(null);
   const [pageData, setPageData] = useState({});
   const [gameUrl, setGameUrl] = useState("");
   const [isSingleCategoryView, setIsSingleCategoryView] = useState(false);
-  const [isExplicitSingleCategoryView, setIsExplicitSingleCategoryView] = useState(false);
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
   const [isLoadingGames, setIsLoadingGames] = useState(false);
   const [mobileShowMore, setMobileShowMore] = useState(false);
-  const [hasMoreGames, setHasMoreGames] = useState(true);
   const refGameModal = useRef();
   const pendingPageRef = useRef(new Set());
   const pendingCategoryFetchesRef = useRef(0);
-  const lastLoadedTagRef = useRef("");
   const lastProcessedPageRef = useRef({ page: null, ts: 0 });
   const { isSlotsOnly, isLogin, isMobile } = useOutletContext();
   const location = useLocation();
-  const searchRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -99,7 +91,6 @@ const Home = () => {
     if (tagIndex !== -1 && selectedCategoryIndex !== tagIndex) {
       setSelectedCategoryIndex(tagIndex);
       setIsSingleCategoryView(false);
-      setIsExplicitSingleCategoryView(false);
       getPage(hashCode);
     }
   }, [location.hash, tags]);
@@ -114,7 +105,6 @@ const Home = () => {
     setShouldShowGameModal(false);
     setActiveCategory({});
     setIsSingleCategoryView(false);
-    setIsExplicitSingleCategoryView(false);
 
     getPage("home");
     getStatus();
@@ -167,9 +157,7 @@ const Home = () => {
     setShowFullDivLoading(true);
     setCategories([]);
     setGames([]);
-    setFirstFiveCategoriesGames([]);
     setIsSingleCategoryView(false);
-    setIsExplicitSingleCategoryView(false);
 
     callApi(contextData, "GET", "/get-page?page=" + page, (result) => callbackGetPage(result, page), null);
   };
@@ -209,7 +197,6 @@ const Home = () => {
 
       const firstFiveCategories = result.data.categories.slice(0, 5);
       if (firstFiveCategories.length > 0) {
-        setFirstFiveCategoriesGames([]);
         pendingCategoryFetchesRef.current = firstFiveCategories.length;
         setIsLoadingGames(true);
         setShowFullDivLoading(true);
@@ -224,7 +211,6 @@ const Home = () => {
         const categoryToShow = matchIndex !== -1 ? result.data.categories[matchIndex] : result.data.categories[0];
         if (categoryToShow) {
           setIsSingleCategoryView(true);
-          setIsExplicitSingleCategoryView(false);
           setActiveCategory(categoryToShow);
           setSelectedCategoryIndex(tagIndex !== -1 ? tagIndex : 0);
           fetchContent(categoryToShow, categoryToShow.id, categoryToShow.table_name, 0, true, result.data.page_group_code);
@@ -233,12 +219,10 @@ const Home = () => {
 
     } else if (result.data && result.data.page_group_type === "games") {
       setIsSingleCategoryView(true);
-      setIsExplicitSingleCategoryView(false);
       setCategories(mainCategories.length > 0 ? mainCategories : []);
       configureImageSrc(result);
       setGames(result.data.content || result.data.categories || []);
       setActiveCategory(tags[tagIndex] || { name: page });
-      setHasMoreGames((result.data.content && result.data.content.length === 30) || (result.data.categories && result.data.categories.length === 30));
       pageCurrent = 1;
       setShowFullDivLoading(false);
     }
@@ -253,14 +237,6 @@ const Home = () => {
 
   const handleLoginConfirm = () => {
     setShowLoginModal(false);
-  };
-
-  const handleCategorySelect = (category) => {
-    setActiveCategory(category);
-    setSelectedProvider(null);
-    setShowFilterModal(false);
-    setIsLoadingGames(false);
-    setTxtSearch("");
   };
 
   const fetchContentForCategory = (category, categoryId, tableName, categoryIndex, resetCurrentPage, pageGroupCode = null) => {
@@ -292,17 +268,6 @@ const Home = () => {
         ...game,
         imageDataSrc: game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url,
       }));
-
-      const categoryGames = {
-        category: category,
-        games: gamesWithImages,
-      };
-
-      setFirstFiveCategoriesGames((prev) => {
-        const updated = [...prev];
-        updated[categoryIndex] = categoryGames;
-        return updated;
-      });
     }
 
     pendingCategoryFetchesRef.current = Math.max(0, pendingCategoryFetchesRef.current - 1);
@@ -316,20 +281,6 @@ const Home = () => {
     if (!activeCategory) return;
     setIsLoadingGames(true);
     fetchContent(activeCategory, activeCategory.id, activeCategory.table_name, selectedCategoryIndex, false);
-  };
-
-  const loadMoreContent = (category, categoryIndex) => {
-    if (!category) return;
-    if (isMobile) {
-      setMobileShowMore(true);
-    }
-    setIsSingleCategoryView(true);
-    setIsExplicitSingleCategoryView(true);
-    setSelectedCategoryIndex(categoryIndex);
-    setActiveCategory(category);
-    fetchContent(category, category.id, category.table_name, categoryIndex, true);
-    lastLoadedTagRef.current = category.code || "";
-    window.scrollTo(0, 0);
   };
 
   const fetchContent = (category, categoryId, tableName, categoryIndex, resetCurrentPage, pageGroupCode) => {
@@ -367,7 +318,6 @@ const Home = () => {
 
   const callbackFetchContent = (result) => {
     if (result.status === 500 || result.status === 422) {
-      setHasMoreGames(false);
       setShowFullDivLoading(false);
     } else {
       if (pageCurrent == 0) {
@@ -377,7 +327,6 @@ const Home = () => {
         configureImageSrc(result);
         setGames([...games, ...result.content]);
       }
-      setHasMoreGames(result.content.length === 30);
       pageCurrent += 1;
     }
     setShowFullDivLoading(false);
@@ -432,8 +381,6 @@ const Home = () => {
 
   const handleProviderSelect = (provider, index = 0) => {
     setSelectedProvider(provider);
-    setTxtSearch("");
-    setIsExplicitSingleCategoryView(true);
 
     if (provider) {
       setActiveCategory(null);
@@ -460,61 +407,8 @@ const Home = () => {
     }
   };
 
-  const search = (e) => {
-    const keyword = typeof e === 'string' ? e : (e?.target?.value ?? '');
-    setTxtSearch(keyword);
-
-    if (typeof e === 'string') {
-      performSearch(keyword);
-      return;
-    }
-
-    if (e.key === "Enter" || e.keyCode === 13) {
-      performSearch(keyword);
-      searchRef.current?.blur();
-    }
-
-    if (e.key === "Escape" || e.keyCode === 27) {
-      searchRef.current?.blur();
-    }
-  };
-
-  const performSearch = (keyword) => {
-    if (keyword.trim() === "") {
-      return;
-    }
-
-    setGames([]);
-    setIsSingleCategoryView(true);
-    setShowFullDivLoading(true);
-
-    let pageSize = 30;
-
-    callApi(
-      contextData,
-      "GET",
-      "/search-content?keyword=" + encodeURIComponent(keyword) +
-      "&page_group_code=" + pageData.page_group_code +
-      "&length=" + pageSize,
-      callbackSearch,
-      null
-    );
-  };
-
-  const callbackSearch = (result) => {
-    setShowFullDivLoading(false);
-    setIsSingleCategoryView(false);
-    if (result.status === 500 || result.status === 422) {
-      // Handle error
-    } else {
-      configureImageSrc(result);
-      setGames(result.content);
-      pageCurrent = 0;
-    }
-  };
-
   return (
-    <>
+    <div className="main-page">
       {showLoginModal && (
         <LoginModal
           isOpen={showLoginModal}
@@ -535,80 +429,92 @@ const Home = () => {
         />
       ) : (
         <>
-          <Slideshow />
+          {!selectedProvider && <Slideshow />}
+
+          {
+            selectedProvider &&
+            <section className="section section--top">
+              <header className="navigation-bar navigation-bar--without-divider">
+                <button 
+                  className="navigation-bar__left" 
+                  type="button" 
+                  aria-label="Go back"
+                  onClick={() => {
+                    setSelectedProvider(null);
+                  }}
+                >
+                  <svg-image glyph="back_ios" width="24px" height="24px" fill="var(--icon-main)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="var(--icon-main)"><path d="M13.3 20.7l-8-8c-.4-.4-.4-1 0-1.4l8-8c.4-.4 1-.4 1.4 0s.4 1 0 1.4L7.4 12l7.3 7.3c.4.4.4 1 0 1.4s-1 .4-1.4 0z"></path></svg>
+                  </svg-image>
+                </button>
+                <div className="navigation-bar__center navigation-bar__center--double">
+                  <h1 className="navigation-bar__title body-semi-bold">
+                    <i18n-t t="casino-lobby:Virtual Sports" className="navigation-bar__title body-semi-bold">{selectedProvider?.name}</i18n-t>
+                  </h1>
+                </div>
+              </header>
+            </section>
+          }
 
           <ProviderContainer
             categories={categories}
             selectedProvider={selectedProvider}
             setSelectedProvider={setSelectedProvider}
             onProviderSelect={handleProviderSelect}
-            onOpenProviders={() => setShowFilterModal(true)}
           />
 
           {
-            (txtSearch !== "" || selectedProvider || isSingleCategoryView) ? (
-              <div className="games-no-live-page">
-                <div className="content">
-                  <div className="search-text-desktop">
-                    <div className="games-category">
-                      <h3 className="title">
-                        <span className="name-name">{txtSearch.trim() !== "" ? "BUSQUEDA: " + txtSearch.trim() : selectedProvider?.name ? selectedProvider.name : activeCategory?.name}</span>
-                      </h3>
-
-                      {
-                        !isMobile && <SearchInput
-                          txtSearch={txtSearch}
-                          setTxtSearch={setTxtSearch}
-                          searchRef={searchRef}
-                          search={search}
-                          isMobile={isMobile}
-                        />
+            (selectedProvider || isSingleCategoryView) ? (
+              <div>
+                <div className="games-list">
+                  {games.map((game, idx) => (
+                    <GameCard
+                      key={`list-${activeCategory?.id || 'search'}-${game.id}-${idx}`}
+                      id={game.id}
+                      provider={activeCategory?.name || "Casino"}
+                      title={game.name}
+                      imageSrc={
+                        game.image_local !== null
+                          ? contextData.cdnUrl + game.image_local
+                          : game.image_url
                       }
-                    </div>
-                  </div>
-                </div>
-                <div className="single-games-grid">
-                  <div className="games-grid">
-                    {games.map((game, idx) => (
-                      <GameCard
-                        key={`list-${activeCategory?.id || 'search'}-${game.id}-${idx}`}
-                        id={game.id}
-                        provider={activeCategory?.name || "Casino"}
-                        title={game.name}
-                        imageSrc={
-                          game.image_local !== null
-                            ? contextData.cdnUrl + game.image_local
-                            : game.image_url
+                      game={game}
+                      mobileShowMore={mobileShowMore}
+                      onGameClick={(g) => {
+                        if (isLogin) {
+                          launchGame(g, "slot", "tab");
+                        } else {
+                          handleLoginClick();
                         }
-                        game={game}
-                        mobileShowMore={mobileShowMore}
-                        onGameClick={(g) => {
-                          if (isLogin) {
-                            launchGame(g, "slot", "tab");
-                          } else {
-                            handleLoginClick();
-                          }
-                        }}
-                      />
-                    ))}
-                  </div>
-                  {isLoadingGames && <LoadApi />}
-
-                  {
-                    games.length > 0 && (
-                      <div className="text-center">
-                        <a className="load-more" onClick={loadMoreGames}>
-                          VER MÁS
-                        </a>
-                      </div>
-                    )}
+                      }}
+                    />
+                  ))}
                 </div>
+                {isLoadingGames && <LoadApi />}
+
+                {
+                  games.length > 0 && (
+                    <div className="load-more">
+                      <button className="button button--low button--primary" type="button" onClick={loadMoreGames}>
+                        <i18n-t t="casino-lobby:Load More">Cargar más</i18n-t>
+                      </button>
+
+                      <div className="load-more__loader">
+                        <div className="page-loader">
+                          <svg className="loader loader--spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5376 20.4833H5.50435C2.41417 20.4833 0.243672 17.4402 1.2481 14.5179L4.74475 4.3497C5.02254 3.54302 5.78214 3 6.6359 3H20.8313C21.8592 3 22.5827 4.0107 22.2516 4.98374L17.4303 19.1273C17.1541 19.9371 16.3929 20.4817 15.536 20.4817L15.5376 20.4833Z" fill="#B9E113"></path>
+                            <path d="M13.8899 4.92567L4.62883 12.5467C4.48131 12.6692 4.56763 12.9093 4.75909 12.9093H9.08283C9.22251 12.9093 9.32138 13.0474 9.27587 13.1808L7.66722 17.8341C7.59973 18.0287 7.83044 18.1888 7.98895 18.0585L17.0523 10.6478C17.2014 10.5269 17.1151 10.2852 16.9236 10.2852H12.6752C12.534 10.2852 12.4351 10.1455 12.4822 10.0121L14.2117 5.15323C14.2807 4.95863 14.05 4.79541 13.8899 4.92724V4.92567Z" fill="#0A234F"></path>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
             ) :
-              <div className="games-no-live-page">
+              <>
                 {isSingleCategoryView ? (
-                  <div className="single-games-grid">
-                    <div className="games-grid">
+                  <>
+                    <div className="games-list">
                       {games.map((game, idx) => (
                         <GameCard
                           key={`cat-${selectedCategoryIndex}-${game.id}-${idx}`}
@@ -624,13 +530,22 @@ const Home = () => {
                     {isLoadingGames && <LoadApi />}
 
                     {games.length > 0 && (
-                      <div className="text-center">
-                        <a className="load-more" onClick={() => loadMoreGames()}>
-                          VER MÁS
-                        </a>
+                      <div className="load-more">
+                        <button className="button button--low button--primary" type="button" onClick={loadMoreGames}>
+                          <i18n-t t="casino-lobby:Load More">Cargar más</i18n-t>
+                        </button>
+
+                        <div className="load-more__loader">
+                          <div className="page-loader">
+                            <svg className="loader loader--spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M15.5376 20.4833H5.50435C2.41417 20.4833 0.243672 17.4402 1.2481 14.5179L4.74475 4.3497C5.02254 3.54302 5.78214 3 6.6359 3H20.8313C21.8592 3 22.5827 4.0107 22.2516 4.98374L17.4303 19.1273C17.1541 19.9371 16.3929 20.4817 15.536 20.4817L15.5376 20.4833Z" fill="#B9E113"></path>
+                              <path d="M13.8899 4.92567L4.62883 12.5467C4.48131 12.6692 4.56763 12.9093 4.75909 12.9093H9.08283C9.22251 12.9093 9.32138 13.0474 9.27587 13.1808L7.66722 17.8341C7.59973 18.0287 7.83044 18.1888 7.98895 18.0585L17.0523 10.6478C17.2014 10.5269 17.1151 10.2852 16.9236 10.2852H12.6752C12.534 10.2852 12.4351 10.1455 12.4822 10.0121L14.2117 5.15323C14.2807 4.95863 14.05 4.79541 13.8899 4.92724V4.92567Z" fill="#0A234F"></path>
+                            </svg>
+                          </div>
+                        </div>
                       </div>
                     )}
-                  </div>
+                  </>
                 ) : (
                   <>
                     {tags[selectedCategoryIndex]?.code === 'home' && (
@@ -703,13 +618,13 @@ const Home = () => {
                     )}
                   </>
                 )}
-              </div>
+              </>
           }
 
           <Footer isSlotsOnly={isSlotsOnly} />
         </>
       )}
-    </>
+    </div>
   );
 };
 

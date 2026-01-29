@@ -277,11 +277,9 @@ const Layout = () => {
                             </div>
                         </div>
                         <div className="layout__center">
-                            <div className="main-page">
-                                {!shouldShowGameModal && (
-                                    <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
-                                )}
-                            </div>
+                            {!shouldShowGameModal && (
+                                <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
+                            )}
                         </div>
                     </div>
                 </div>

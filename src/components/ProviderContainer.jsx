@@ -49,7 +49,10 @@ const ProviderContainer = ({
                         <SwiperSlide key={idx} data-id="qab-parent">
                             <div className="qab" onClick={(e) => handleClick(e, provider)}>
                                 <figure className="qab__visual">
-                                    <img slot="image" src={imageUrl} alt={provider.name} loading="eager" decoding="async" width="32" height="32" />
+                                    {
+                                        imageUrl && 
+                                        <img slot="image" src={imageUrl} alt={provider.name} loading="eager" decoding="async" width="32" height="32" />
+                                    }
                                 </figure>
                                 <span className="qab__text">
                                     <i18n-t slot="title" t="common-dynamic-components:Promos">{provider.name}</i18n-t>
