@@ -343,6 +343,6 @@
 
 
 .swiper-slide {
-    height: auto;
+    height: auto !important;
     cursor: pointer;
 }
