@@ -6,7 +6,6 @@ import { callApi } from "../../utils/Utils";
 import ImgCasino from "/src/assets/svg/blue-casino.svg";
 import ImgLiveCasino from "/src/assets/svg/blue-live-casino.svg";
 import ImgSports from "/src/assets/svg/blue-sports.svg";
-import ImgProfile from "/src/assets/svg/profile.svg";
 import ImgLogout from "/src/assets/svg/logout.svg";
 import ImgPhone from "/src/assets/svg/phone.svg";
 import IconArrowDown from "/src/assets/svg/arrow-down.svg";
@@ -20,10 +19,10 @@ import ImgCategoryRoulette from "/src/assets/img/roulette.png";
 import ImgCategoryCrash from "/src/assets/img/crash.webp";
 import ImgCategoryMegaways from "/src/assets/img/megaway.png";
 
-const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handleLogoutClick }) => {
+const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
+    const { isSidebarExpanded } = useContext(LayoutContext);
     const { contextData } = useContext(AppContext);
 
     const [expandedMenus, setExpandedMenus] = useState([]);
@@ -33,7 +32,6 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
     const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
     const [isPopoverVisible, setIsPopoverVisible] = useState(false);
 
-    const iconRefs = useRef({});
     const popoverRef = useRef(null);
     const hoverTimeoutRef = useRef(null);
 
@@ -157,21 +155,6 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                     ],
                 },
             ]),
-        ...(isLoggedIn
-            ? [
-                {
-                    id: "profile",
-                    name: "Cuenta",
-                    image: ImgProfile,
-                    href: "/profile/detail",
-                    subItems: [
-                        { name: "Ajustes de Cuenta", href: "/profile/detail" },
-                        { name: "Historial de transacciones", href: "/profile/transaction" },
-                        { name: "Historial de Casino", href: "/profile/history" },
-                    ],
-                },
-            ]
-            : []),
         ...(supportParent
             ? [
                 {
@@ -183,18 +166,6 @@ const Sidebar = ({ isSlotsOnly, isMobile, supportParent, openSupportModal, handl
                     action: () => {
                         openSupportModal(true);
                     },
-                },
-            ]
-            : []),
-        ...(isLoggedIn
-            ? [
-                {
-                    id: "logout",
-                    name: "Cerrar sesión",
-                    image: ImgLogout,
-                    href: "#",
-                    subItems: [],
-                    action: handleLogoutClick,
                 },
             ]
             : []),

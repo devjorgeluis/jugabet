@@ -158,17 +158,6 @@ const Layout = () => {
         setUserBalance(balance);
     };
 
-    const handleLogoutClick = () => {
-        callApi(contextData, "POST", "/logout", (result) => {
-            if (result.status === "success") {
-                setTimeout(() => {
-                    localStorage.removeItem("session");
-                    window.location.href = "/";
-                }, 200);
-            }
-        }, null);
-    };
-
     const openSupportModal = (parentOnly = false) => {
         setSupportParentOnly(Boolean(parentOnly));
         setShowSupportModal(true);
@@ -233,7 +222,6 @@ const Layout = () => {
         supportTelegram,
         supportEmail,
         handleLoginClick,
-        handleLogoutClick,
         refreshBalance,
         isSidebarExpanded,
         toggleSidebar,
@@ -262,7 +250,6 @@ const Layout = () => {
                     userBalance={userBalance}
                     isSlotsOnly={isSlotsOnly}
                     handleLoginClick={handleLoginClick}
-                    handleLogoutClick={handleLogoutClick}
                     supportParent={supportParent}
                     openSupportModal={openSupportModal}
                 />
@@ -272,7 +259,7 @@ const Layout = () => {
                         <div className="layout__left">
                             <div data-section="layout-menu">
                                 <div className="menu" id="menu">
-                                    {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} handleLogoutClick={handleLogoutClick} />}
+                                    {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
                                 </div>
                             </div>
                         </div>

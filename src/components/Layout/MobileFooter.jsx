@@ -19,7 +19,6 @@ const MobileFooter = ({
     isMobile,
     supportParent,
     openSupportModal,
-    handleLogoutClick,
 }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -176,18 +175,6 @@ const MobileFooter = ({
                         window.scrollTo({ top: 0, behavior: "smooth" });
                         openSupportModal(true);
                     },
-                },
-            ]
-            : []),
-        ...(isLoggedIn
-            ? [
-                {
-                    id: "logout",
-                    name: "Cerrar sesión",
-                    image: ImgLogout,
-                    href: "#",
-                    subItems: [],
-                    action: handleLogoutClick,
                 },
             ]
             : []),

@@ -33,7 +33,7 @@ const Header = ({
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
-    };    
+    };
 
     return (
         <header className="header" id="header-layout">
@@ -69,7 +69,7 @@ const Header = ({
                         </button>
                         {
                             isLogin ? <>
-                                <a className="header__tab header__tab--flexible">
+                                <a className="header__tab header__tab--flexible" onClick={() => navigate("/account")}>
                                     <span className="header__icon">
                                         <img src={ImgAccount} />
                                     </span>

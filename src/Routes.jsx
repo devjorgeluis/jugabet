@@ -5,6 +5,7 @@ import Casino from "./pages/Casino";
 import LiveCasino from "./pages/LiveCasino";
 import Sports from "./pages/Sports";
 import LiveSports from "./pages/LiveSports";
+import Account from "./pages/Profile/Account";
 import Profile from "./pages/Profile/Profile";
 import ProfileDetail from "./pages/Profile/ProfileDetail";
 import ProfileHistory from "./pages/Profile/ProfileHistory";
@@ -23,6 +24,7 @@ export default function AppRoutes() {
                 <Route path="/live-casino" element={<LiveCasino />} />
                 <Route path="/sports" element={<Sports />} />
                 <Route path="/live-sports" element={<LiveSports />} />
+                <Route path="/account" element={<Account />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/profile/detail" element={<ProfileDetail />} />
                 <Route path="/profile/history" element={<ProfileHistory />} />

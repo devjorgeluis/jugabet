@@ -8,7 +8,6 @@ export const LayoutContext = createContext({
     supportEmail: "",
     supportParent: "",
     handleLoginClick: () => { },
-    handleLogoutClick: () => { },
     handleChangePasswordClick: () => { },
     refreshBalance: () => { },
     setShowFullDivLoading: () => { },
