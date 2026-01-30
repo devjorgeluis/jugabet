@@ -549,7 +549,6 @@ const Casino = () => {
                         games={entry.games.slice(0, 30)}
                         name={entry?.category?.name}
                         title={entry?.category?.name}
-                        icon=""
                         slideshowKey={entry?.category?.id}
                         loadMoreContent={() =>
                           loadMoreContent(entry.category, catIndex)

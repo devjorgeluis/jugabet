@@ -559,8 +559,6 @@ const Home = () => {
                             games={topGames}
                             name="games"
                             title="Juegos Populares"
-                            icon=""
-                            link="/casino"
                             onGameClick={(game) => {
                               if (isLogin) {
                                 launchGame(game, "slot", "modal");
@@ -575,8 +573,6 @@ const Home = () => {
                             games={topCasino}
                             name="casino"
                             title="Casino"
-                            icon="cherry"
-                            link="/casino"
                             onGameClick={(game) => {
                               if (isLogin) {
                                 launchGame(game, "slot", "modal");
@@ -591,8 +587,6 @@ const Home = () => {
                             games={topLiveCasino}
                             name="liveCasino"
                             title="Casino en Vivo"
-                            icon="spades"
-                            link="/live-casino"
                             onGameClick={(game) => {
                               if (isLogin) {
                                 launchGame(game, "slot", "modal");
@@ -607,8 +601,6 @@ const Home = () => {
                             games={topArcade}
                             name="arcade"
                             title="Crash Games"
-                            icon="cherry"
-                            link="/casino"
                             onGameClick={(game) => {
                               if (isLogin) {
                                 launchGame(game, "slot", "modal");
