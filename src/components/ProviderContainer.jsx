@@ -53,7 +53,7 @@ const ProviderContainer = ({
                                         <figure className="qab__visual">
                                             {
                                                 imageUrl && 
-                                                <img slot="image" src={imageUrl} alt={provider.name} loading="eager" decoding="async" width="32" height="32" />
+                                                <img slot="image" src={imageUrl} loading="eager" decoding="async" width="32" height="32" />
                                             }
                                         </figure>
                                         <span className="qab__text">
@@ -75,7 +75,7 @@ const ProviderContainer = ({
                             <figure className="qab__visual">
                                 {
                                     imageUrl && 
-                                    <img slot="image" src={imageUrl} alt={provider.name} loading="eager" decoding="async" width="32" height="32" />
+                                    <img slot="image" src={imageUrl} loading="eager" decoding="async" width="32" height="32" />
                                 }
                             </figure>
                             <span className="qab__text">

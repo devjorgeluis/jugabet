@@ -6793,3 +6793,7 @@ svg-image::part(skeleton) {
 a {
     cursor: pointer;
 }
+
+.mt-3 {
+    margin-top: 10px;
+}

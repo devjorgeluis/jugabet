@@ -50,15 +50,11 @@ const Casino = () => {
   const [mobileShowMore, setMobileShowMore] = useState(false);
   const [isSingleCategoryView, setIsSingleCategoryView] = useState(false);
   const [isExplicitSingleCategoryView, setIsExplicitSingleCategoryView] = useState(false);
-  const [hasMoreGames, setHasMoreGames] = useState(true);
-  const [showFilterModal, setShowFilterModal] = useState(false);
   const [isLoadingGames, setIsLoadingGames] = useState(false);
   const refGameModal = useRef();
   const location = useLocation();
   const { isSlotsOnly, isMobile } = useOutletContext();
-  const lastLoadedTagRef = useRef("");
   const pendingCategoryFetchesRef = useRef(0);
-  const searchRef = useRef(null);
 
   useEffect(() => {
     if (!location.hash || tags.length === 0) return;
@@ -156,7 +152,6 @@ const Casino = () => {
         configureImageSrc(result);
         setGames(result.data.categories || []);
         setActiveCategory(tags[tagIndex] || { name: page });
-        setHasMoreGames(result.data.categories && result.data.categories.length === 30);
         pageCurrent = 1;
       }
 
@@ -256,7 +251,6 @@ const Casino = () => {
 
   const callbackFetchContent = (result) => {
     if (result.status === 500 || result.status === 422) {
-      setHasMoreGames(false);
       setShowFullDivLoading(false);
       setIsLoadingGames(false);
     } else {
@@ -267,7 +261,6 @@ const Casino = () => {
         configureImageSrc(result);
         setGames([...games, ...result.content]);
       }
-      setHasMoreGames(result.content.length === 30);
       pageCurrent += 1;
     }
     setShowFullDivLoading(false);
@@ -449,7 +442,6 @@ const Casino = () => {
               selectedProvider={selectedProvider}
               setSelectedProvider={setSelectedProvider}
               onProviderSelect={handleProviderSelect}
-              onOpenProviders={() => setShowFilterModal(true)}
             />
           </div>
 

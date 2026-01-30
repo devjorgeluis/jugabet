@@ -5,16 +5,13 @@ import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
 import GameCard from "/src/components/GameCard";
-
+import Slideshow from "../components/Home/Slideshow";
 import GameModal from "../components/Modal/GameModal";
-import Hero from "../components/LiveCasino/Hero";
-import GameContainer from "../components/LiveCasino/GameContainer";
+import HotGameSlideshow from "../components/Home/HotGameSlideshow";
 import ProviderContainer from "../components/ProviderContainer";
 import Footer from "../components/Layout/Footer";
-import LoadGames from "../components/Loading/LoadGames";
-import SearchInput from "../components/SearchInput";
-import SearchSelect from "../components/SearchSelect";
 import LoginModal from "../components/Modal/LoginModal";
+import LoadApi from "../components/Loading/LoadApi";
 import "animate.css";
 
 let selectedGameId = null;
@@ -41,13 +38,9 @@ const LiveCasino = () => {
   const [gameUrl, setGameUrl] = useState("");
   const [isLoadingGames, setIsLoadingGames] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [txtSearch, setTxtSearch] = useState("");
-  const [searchDelayTimer, setSearchDelayTimer] = useState();
   const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
-  const [isSingleCategoryView, setIsSingleCategoryView] = useState(false);
   const refGameModal = useRef();
   const location = useLocation();
-  const searchRef = useRef(null);
   const { isMobile } = useOutletContext();
   const hasFetchedContentRef = useRef(false);
   const prevHashRef = useRef("");
@@ -63,7 +56,6 @@ const LiveCasino = () => {
     setGameUrl("");
     setShouldShowGameModal(false);
     setActiveCategory({});
-    setIsSingleCategoryView(false);
     hasFetchedContentRef.current = false;
     lastLoadedCategoryRef.current = null;
     getPage("livecasino");
@@ -175,12 +167,10 @@ const LiveCasino = () => {
 
     const handleHashNavigation = () => {
       setSelectedProvider(null);
-      setTxtSearch("");
 
       if (!hash || hash === "#home") {
         setActiveCategory(categories[0]);
         setSelectedCategoryIndex(0);
-        setIsSingleCategoryView(false);
         setGames([]);
 
         setFirstFiveCategoriesGames([]);
@@ -206,7 +196,6 @@ const LiveCasino = () => {
         const categoryIndex = categories.indexOf(category);
         setActiveCategory(category);
         setSelectedCategoryIndex(categoryIndex);
-        setIsSingleCategoryView(true);
         setSelectedProvider(category)
 
         setGames([]);
@@ -350,11 +339,9 @@ const LiveCasino = () => {
   };
 
   const handleProviderSelect = (provider, index = 0) => {
-    setTxtSearch("");
     if (categories.length > 0 && provider) {
       if (provider.code === "home") {
         setSelectedProvider(null);
-        setIsSingleCategoryView(false);
         setActiveCategory(provider);
         setSelectedCategoryIndex(0);
         setGames([]);
@@ -373,7 +360,6 @@ const LiveCasino = () => {
         lastLoadedCategoryRef.current = null;
       } else {
         setSelectedProvider(provider);
-        setIsSingleCategoryView(true);
         const providerIndex = categories.findIndex(cat => cat.id === provider.id);
         setActiveCategory(provider);
         setSelectedCategoryIndex(providerIndex !== -1 ? providerIndex : index);
@@ -383,7 +369,6 @@ const LiveCasino = () => {
     } else if (!provider && categories.length > 0) {
       const firstCategory = categories[0];
       setSelectedProvider(null);
-      setIsSingleCategoryView(false);
       setActiveCategory(firstCategory);
       setSelectedCategoryIndex(0);
       setGames([]);
@@ -401,67 +386,6 @@ const LiveCasino = () => {
       navigate("/live-casino#home");
       lastLoadedCategoryRef.current = null;
     }
-  };
-
-  const search = (e) => {
-    let keyword = e.target.value;
-    setTxtSearch(keyword);
-    setIsSingleCategoryView(true);
-    lastLoadedCategoryRef.current = null; // Reset on search
-
-    if (navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)) {
-      do_search(keyword);
-    } else {
-      if (
-        (e.keyCode >= 48 && e.keyCode <= 57) ||
-        (e.keyCode >= 65 && e.keyCode <= 90) ||
-        e.keyCode == 8 ||
-        e.keyCode == 46
-      ) {
-        do_search(keyword);
-      }
-    }
-
-    if (e.key === "Enter" || e.keyCode === 13 || e.key === "Escape" || e.keyCode === 27) {
-      searchRef.current?.blur();
-    }
-  };
-
-  const do_search = (keyword) => {
-    clearTimeout(searchDelayTimer);
-
-    if (keyword === "") {
-      return;
-    }
-
-    setGames([]);
-    setIsLoadingGames(true);
-
-    let pageSize = 20;
-
-    let searchDelayTimerTmp = setTimeout(function () {
-      callApi(
-        contextData,
-        "GET",
-        "/search-content?keyword=" + txtSearch + "&page_group_code=" + pageData.page_group_code + "&length=" + pageSize,
-        callbackSearch,
-        null
-      );
-    }, 1000);
-
-    setSearchDelayTimer(searchDelayTimerTmp);
-  };
-
-  const callbackSearch = (result) => {
-    if (result.status === 500 || result.status === 422) {
-      setIsLoadingGames(false);
-    } else {
-      configureImageSrc(result);
-      setGames(result.content);
-      pageCurrent = 0;
-      lastLoadedCategoryRef.current = null; // Reset on search
-    }
-    setIsLoadingGames(false);
   };
 
   return (
@@ -489,180 +413,143 @@ const LiveCasino = () => {
         />
       )}
 
-      {/* Only show LiveCasino content when game modal is NOT shown */}
       {!shouldShowGameModal && (
-        <div className="overflow-x-hidden [grid-area:main] pt-4">
-          <div className="grid grid-rows-[max-content] [grid-template-areas:_'left-column'_'main-column'_'right-column'] lg:grid-cols-[auto_1fr_auto] lg:[grid-template-areas:_'left-column_main-column_right-column']">
-            <div className="max-w-[100vw] [grid-area:main-column]">
-              <div className="flex flex-col gap-4">
-                <div className="gap-4 container md:grid md:grid-cols-1">
-                  <div className="flex flex-col">
-                    {
-                      !selectedProvider && <>
-                        <Hero />
-                      </>
-                    }
+        <>
+          {
+            selectedProvider && selectedProvider.name ?
+              <>
+                <div className="section section--top">
+                  <header className="navigation-bar ">
+                    <button
+                      className="navigation-bar__left"
+                      type="button"
+                      aria-label="Go back"
+                      onClick={() => {
+                        setSelectedProvider(null);
+                      }}
+                    >
+                      <svg-image glyph="back_ios" width="24px" height="24px" fill="var(--icon-main)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="var(--icon-main)"><path d="M13.3 20.7l-8-8c-.4-.4-.4-1 0-1.4l8-8c.4-.4 1-.4 1.4 0s.4 1 0 1.4L7.4 12l7.3 7.3c.4.4.4 1 0 1.4s-1 .4-1.4 0z"></path></svg>
+                      </svg-image>
+                    </button>
+                    <div className="navigation-bar__center navigation-bar__center--double">
+                      <h1 className="navigation-bar__title body-semi-bold">
+                        <i18n-t t="casino-lobby:Slots" className="navigation-bar__title body-semi-bold">Casino en vivo</i18n-t>
+                      </h1>
+                      {
+                        selectedProvider.name &&
+                        <p className="navigation-bar__subtitle caption-1-regular">
+                          <i18n-t>{selectedProvider.name}</i18n-t>
+                        </p>
+                      }
+                    </div>
+                  </header>
+                </div>
+                <div className="games-list">
+                  {games.map((game) => (
+                    <GameCard
+                      key={game.id}
+                      id={game.id}
+                      provider={activeCategory?.name || "Casino"}
+                      title={game.name}
+                      imageSrc={
+                        game.image_local !== null
+                          ? contextData.cdnUrl + game.image_local
+                          : game.image_url
+                      }
+                      game={game}
+                      onGameClick={(g) => {
+                        if (isLogin) {
+                          launchGame(g, "slot", "tab");
+                        } else {
+                          handleLoginClick();
+                        }
+                      }}
+                    />
+                  ))}
+                </div>
+                
+                {isLoadingGames && <LoadApi />}
 
-                    {
-                      selectedProvider && selectedProvider.name ? <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
-                        <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
-                          <div className="[grid-area:content]">
-                            <div className="flex flex-col gap-4">
-                              <div className="contents">
-                                <img
-                                  src={selectedProvider.image_local != null && selectedProvider.image_local !== "" ? contextData.cdnUrl + selectedProvider.image_local : selectedProvider.image_url}
-                                  alt="EspressoGames"
-                                  className="w-32 object-contain"
-                                  loading="eager"
-                                />
-                              </div>
-                              <h1 className="mb-8 text-lg font-extrabold leading-normal lg:text-2xl">
-                                {selectedProvider.name}
-                              </h1>
-                            </div>
+                <div className="load-more">
+                  <button className="button button--low button--primary" type="button" onClick={loadMoreGames}>
+                    <i18n-t t="casino-lobby:Load More">Cargar más</i18n-t>
+                  </button>
 
-                            <div className="mb-6 grid grid-cols-12 gap-4 sm:mb-10 sm:gap-2.5 lg:gap-6">
-                              {games.map((game) => (
-                                <div className="col-span-6 sm:col-span-3">
-                                  <GameCard
-                                    key={"popular" + game.id}
-                                    id={game.id}
-                                    provider={activeCategory?.name || 'Casino'}
-                                    title={game.name}
-                                    imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                    onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
-                                  />
-                                </div>
-                              ))}
-                            </div>
-
-                            {/* Load More Button */}
-                            <div className="relative flex min-h-[2.75rem] items-center justify-center sm:justify-normal">
-                              <button
-                                onClick={loadMoreGames}
-                                type="button"
-                                className="inline-flex w-full sm:max-w-[15.875rem] sm:absolute sm:left-1/2 sm:-translate-x-1/2 items-center justify-center rounded-lg bg-transparent px-4 py-3 font-bold text-base text-theme-secondary-500 ring-1 ring-inset ring-current hover:bg-theme-secondary-500/10"
-                              >
-                                Cargar más
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div> : <>
-                        <ProviderContainer
-                          categories={categories}
-                          selectedProvider={selectedProvider}
-                          setSelectedProvider={setSelectedProvider}
-                          onProviderSelect={handleProviderSelect}
-                        />
-
-                        <>
-                          {firstFiveCategoriesGames && firstFiveCategoriesGames.map((entry, catIndex) => {
-                            if (!entry || !entry.games) return null;
-                            const categoryKey = entry.category?.id || `cat-${catIndex}`;
-
-                            return (
-                              <GameContainer
-                                title={entry?.category?.name}
-                                games={entry?.games}
-                                key={"category-" + categoryKey}
-                                isLogin={isLogin}
-                                onGameClick={(game) => {
-                                  if (isLogin) {
-                                    launchGame(game, "slot", "tab");
-                                  } else {
-                                    setShowLoginModal(true);
-                                  }
-                                }}
-                              />
-                            );
-                          })}
-                        </>
-
-                        <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content'] pb-6 pt-10 sm:pb-12 sm:pt-16">
-                          <h1 className="mb-6 flex flex-col gap-4 text-4xl font-bold -tracking-[0.6px] text-white [grid-area:heading] sm:mb-12 sm:flex-row sm:items-center sm:gap-6 sm:-tracking-[0.72px]">
-                            <a
-                              onClick={() => navigate("/")}
-                              className="cursor-pointer aria-disabled:cursor-not-allowed aria-disabled:opacity-75 flex-shrink-0 disabled:cursor-not-allowed max-w-full flex-shrink-0 text-ellipsis ring-0 focus-visible:outline-0 font-bold text-base gap-2.5 text-theme-secondary-500 bg-theme-secondary-500/10 disabled:bg-theme-secondary-500/10 disabled:text-theme-secondary-500 disabled:opacity-30 focus-visible:ring-theme-secondary-500 focus-visible:ring-2 focus-visible:ring-inset focus:outline-theme-secondary-500/10 focus:bg-theme-secondary-500/20 focus:outline focus:outline-4 hover:bg-theme-secondary-500/20 inline-flex items-center justify-center w-fit rounded-lg p-2 sm:p-2.5 lg:p-3"
-                              aria-label="Volver al inicio"
-                            >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              >
-                                <path d="M5 12h14M5 12l6 6m-6-6l6-6" />
-                              </svg>
-                            </a>
-                            Todos los juegos de casino
-                          </h1>
-
-                          <div className="mb-6 grid w-full grid-cols-12 gap-2 [grid-area:filters] sm:mb-12 lg:flex lg:flex-row lg:justify-between lg:gap-4">
-                            <SearchInput
-                              txtSearch={txtSearch}
-                              setTxtSearch={setTxtSearch}
-                              searchRef={searchRef}
-                              search={search}
-                              isMobile={isMobile}
-                            />
-                            <SearchSelect
-                              categories={categories}
-                              selectedProvider={selectedProvider}
-                              setSelectedProvider={setSelectedProvider}
-                              onProviderSelect={handleProviderSelect}
-                            />
-                          </div>
-
-                          <div className="[grid-area:content]">
-                            <div
-                              className="mb-6 grid gap-x-2 gap-y-8 sm:mb-12 lg:gap-x-4"
-                              style={{
-                                '--games-list-grid-cols': 6,
-                                gridTemplateColumns: 'repeat(var(--games-list-grid-cols, 5), minmax(0, 1fr))'
-                              }}
-                            >
-                              {games.map((game) => (
-                                <GameCard
-                                  key={"top-crash-" + game.id}
-                                  id={game.id}
-                                  provider={activeCategory?.name || 'Casino'}
-                                  title={game.name}
-                                  imageSrc={game.image_local !== null ? contextData.cdnUrl + game.image_local : game.image_url}
-                                  onClick={() => (isLogin ? launchGame(game, "slot", "tab") : handleLoginClick())}
-                                />
-                              ))}
-                              {isLoadingGames && <LoadGames />}
-                            </div>
-
-                            {
-                              txtSearch !== "" &&
-                              <div className="relative flex min-h-12 items-center justify-center sm:justify-normal">
-                                <button
-                                  onClick={loadMoreGames}
-                                  type="button"
-                                  className="inline-flex items-center justify-center rounded-lg bg-theme-secondary-500/10 px-4 py-3 font-bold text-base text-theme-secondary-500 hover:bg-theme-secondary-500/20 sm:absolute sm:left-1/2 sm:-translate-x-1/2"
-                                >
-                                  Cargar más
-                                </button>
-                              </div>
-                            }
-                          </div>
-                        </div>
-                      </>
-                    }
-
-                    <Footer />
+                  <div className="load-more__loader">
+                    <div className="page-loader">
+                      <svg className="loader loader--spin" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.5376 20.4833H5.50435C2.41417 20.4833 0.243672 17.4402 1.2481 14.5179L4.74475 4.3497C5.02254 3.54302 5.78214 3 6.6359 3H20.8313C21.8592 3 22.5827 4.0107 22.2516 4.98374L17.4303 19.1273C17.1541 19.9371 16.3929 20.4817 15.536 20.4817L15.5376 20.4833Z" fill="#B9E113"></path>
+                        <path d="M13.8899 4.92567L4.62883 12.5467C4.48131 12.6692 4.56763 12.9093 4.75909 12.9093H9.08283C9.22251 12.9093 9.32138 13.0474 9.27587 13.1808L7.66722 17.8341C7.59973 18.0287 7.83044 18.1888 7.98895 18.0585L17.0523 10.6478C17.2014 10.5269 17.1151 10.2852 16.9236 10.2852H12.6752C12.534 10.2852 12.4351 10.1455 12.4822 10.0121L14.2117 5.15323C14.2807 4.95863 14.05 4.79541 13.8899 4.92724V4.92567Z" fill="#0A234F"></path>
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </> : <>
+                <div className="section section--top">
+                  <header className="navigation-bar ">
+                    <button
+                      className="navigation-bar__left"
+                      type="button"
+                      aria-label="Go back"
+                      onClick={() => {
+                        setSelectedProvider(null);
+                      }}
+                    >
+                      <svg-image glyph="back_ios" width="24px" height="24px" fill="var(--icon-main)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="var(--icon-main)"><path d="M13.3 20.7l-8-8c-.4-.4-.4-1 0-1.4l8-8c.4-.4 1-.4 1.4 0s.4 1 0 1.4L7.4 12l7.3 7.3c.4.4.4 1 0 1.4s-1 .4-1.4 0z"></path></svg>
+                      </svg-image>
+                    </button>
+                    <div className="navigation-bar__center navigation-bar__center--double">
+                      <h1 className="navigation-bar__title body-semi-bold">
+                        <i18n-t t="casino-lobby:Slots" className="navigation-bar__title body-semi-bold">Casino en vivo</i18n-t>
+                      </h1>
+                    </div>
+                  </header>
+                  <div className="promo-bar section section--top">
+                    <Slideshow />
+                  </div>
+                  <ProviderContainer
+                    categories={categories}
+                    selectedProvider={selectedProvider}
+                    setSelectedProvider={setSelectedProvider}
+                    onProviderSelect={handleProviderSelect}
+                  />
+                </div>
+
+                <>
+                  {firstFiveCategoriesGames.map((entry, catIndex) => {
+                    if (!entry || !entry.games) return null;
+
+                    return (
+                      <HotGameSlideshow
+                        key={entry?.category?.id || catIndex}
+                        games={entry.games.slice(0, 30)}
+                        name={entry?.category?.name}
+                        title={entry?.category?.name}
+                        icon=""
+                        slideshowKey={entry?.category?.id}
+                        loadMoreContent={() =>
+                          loadMoreContent(entry.category, catIndex)
+                        }
+                        onGameClick={(g) => {
+                          if (isLogin) {
+                            launchGame(g, "slot", "tab");
+                          } else {
+                            handleLoginClick();
+                          }
+                        }}
+                      />
+                    );
+                  })}
+                </>
+
+                {isLoadingGames && <LoadApi />}
+              </>
+          }
+
+          <Footer />
+        </>
       )}
     </>
   );
