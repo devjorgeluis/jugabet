@@ -635,7 +635,8 @@ details summary::-webkit-details-marker {
 
 .auth-layout__body--rounded {
     border-radius: 16px 16px 0 0;
-    margin-top: -12px
+    margin-top: -12px;
+    padding: 12px;
 }
 
 .auth-layout__container {
@@ -900,7 +901,8 @@ details summary::-webkit-details-marker {
     line-height: 20px;
     min-height: 48px;
     padding: 8px 20px;
-    width: 100%
+    width: 100%;
+    margin-top: 10px;
 }
 
 .button--low,
@@ -1785,7 +1787,8 @@ details summary::-webkit-details-marker {
 }
 
 .text-field {
-    position: relative
+    position: relative;
+    margin-top: 20px;
 }
 
 .text-field:before {
@@ -1820,7 +1823,7 @@ details summary::-webkit-details-marker {
     -webkit-transition: border-color .3s ease;
     transition: border-color .3s ease;
     width: 100%;
-    z-index: 2
+    z-index: 2;
 }
 
 .text-field__input:focus {
@@ -1861,7 +1864,7 @@ details summary::-webkit-details-marker {
 }
 
 .text-field__label {
-    color: var(--text-body);
+    color: #233550;
     font-size: 16px;
     font-weight: 400;
     inset-block-start: 14px;
@@ -1908,34 +1911,6 @@ details summary::-webkit-details-marker {
 .text-field__label--required:after {
     color: var(--text-error);
     content: " *"
-}
-
-.text-field__label--active {
-    -webkit-transform: translateY(-8px) scale(.8);
-    -ms-transform: translateY(-8px) scale(.8);
-    transform: translateY(-8px) scale(.8);
-    -webkit-transform-origin: left top;
-    -ms-transform-origin: left top;
-    transform-origin: left top
-}
-
-:host([dir=rtl]) .text-field__label--active,
-[dir=rtl] .text-field__label--active {
-    -webkit-transform-origin: right top;
-    -ms-transform-origin: right top;
-    transform-origin: right top
-}
-
-:global(html[dir=rtl]) .text-field__label--active {
-    -webkit-transform-origin: right top;
-    -ms-transform-origin: right top;
-    transform-origin: right top
-}
-
-:host-context([dir=rtl]) .text-field__label--active {
-    -webkit-transform-origin: right top;
-    -ms-transform-origin: right top;
-    transform-origin: right top
 }
 
 .text-field__mask {
@@ -2101,6 +2076,10 @@ details summary::-webkit-details-marker {
     line-height: 16px;
     margin-block-start: 2px;
     text-transform: none
+}
+
+.text-field--append .text-field__label, .text-field:has(.text-field__append) .text-field__label {
+    inset-inline-end: 56px;
 }
 
 .text-field__hint,
@@ -6912,4 +6891,81 @@ a {
     flex-direction: column;
     height: 100%;
     overflow-y: auto;
+}
+
+.text-field {
+    position: relative;
+}
+
+.text-field--error .text-field__input {
+    border-color: #ff6964;
+}
+
+.text-field__label--active {
+    -webkit-transform: translateY(-8px) scale(.8);
+    -ms-transform: translateY(-8px) scale(.8);
+    transform: translateY(-8px) scale(.8);
+    -webkit-transform-origin: left top;
+    -ms-transform-origin: left top;
+    transform-origin: left top;
+}
+
+.auth-header--large {
+    height: 160px;
+}
+
+.auth-header {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+}
+
+.auth-header__background {
+    width: 100%;
+    height: 100%;
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+.auth-header__close--banner {
+    color: #fff;
+    background-color: rgba(0,0,0,.2);
+    border-radius: 100%;
+}
+
+.auth-header__close {
+    position: absolute;
+    inset-inline-end: calc(4px * 2);
+    top: calc(4px * 2);
+    z-index: 30;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.flex {
+    display: flex;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.gap-3 {
+    gap: 10px;
 }

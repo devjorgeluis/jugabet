@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Casino from "./pages/Casino";
 import LiveCasino from "./pages/LiveCasino";
@@ -29,6 +30,7 @@ export default function AppRoutes() {
                 <Route path="/game-login" element={<NoAuthGamePage gameName="Game" gameImg="" />} />
                 <Route path="*" element={<NoPage />} />
             </Route>
+            <Route path="/login" element={<Login />} />
         </Routes>
     );
 }

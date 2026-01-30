@@ -151,7 +151,7 @@ const Layout = () => {
     };
 
     const handleLoginClick = () => {
-        setShowLoginModal(true);
+        navigate("/login");
     };
 
     const handleLoginSuccess = (balance) => {
