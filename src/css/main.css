@@ -265,7 +265,6 @@ main[role=main].loading {
         grid-template-columns: 320px 1fr 320px;
         height: var(--screen-height);
         padding-bottom: 0;
-        padding-right: 30px;
     }
 
     .layout__left {
@@ -6796,4 +6795,121 @@ a {
 
 .mt-3 {
     margin-top: 10px;
+}
+
+.game-iframe-view_gameIframeWrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    max-width: 1500px;
+    margin: 0 auto
+}
+
+@media(max-width: 992px) {
+    .game-iframe-view_gameIframeWrapper {
+        background-color: #000217;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100000
+    }
+}
+
+.game-iframe-view_gameIframeWrapper.game-iframe-view_default {
+    aspect-ratio: 1125/635;
+    max-width: 1125px
+}
+
+@media(max-width: 992px) {
+    .game-iframe-view_gameIframeWrapper.game-iframe-view_default {
+        aspect-ratio: inherit;
+        max-width: inherit
+    }
+}
+
+.game-iframe-view_gameIframeWrapper.game-iframe-view_tvbet {
+    max-width: 1500px;
+    aspect-ratio: 1500/847
+}
+
+@media(max-width: 992px) {
+    .game-iframe-view_gameIframeWrapper.game-iframe-view_tvbet {
+        max-width: inherit;
+        aspect-ratio: inherit;
+        height: 100% !important;
+        min-height: 100% !important
+    }
+}
+
+.game-iframe-view_gameIframeWrapper.game-iframe-view_sportbook {
+    height: calc(100vh - 79px) !important;
+    min-height: 100%;
+    max-width: 100%;
+    height: 100%
+}
+
+@media(max-width: 992px) {
+    .game-iframe-view_gameIframeWrapper.game-iframe-view_sportbook {
+        top: 75px;
+        z-index: 999;
+        height: 100% !important
+    }
+
+    .game-iframe-view_gameIframeWrapper.game-iframe-view_sportbook>.game-iframe-view_gameIframe {
+        height: calc(100% - 75px)
+    }
+}
+
+.game-iframe-view_gameIframe {
+    width: 100%;
+    height: 100%;
+    z-index: 0
+}
+
+@media(max-width: 992px) {
+    .game-iframe-view_gameIframe {
+        min-height: auto !important
+    }
+
+    .game-iframe-view_gameIframe.game-iframe-view_sportbook {
+        height: calc(100% - 50px)
+    }
+}
+
+.game_interface a {
+    cursor: pointer;
+}
+
+.betslip {
+    position: fixed;
+    inset-inline-end: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 70;
+    display: none;
+    width: 100%;
+    background-color: #fff;
+}
+
+@media (min-width: 1280px) {
+    .betslip {
+        top: 56px;
+        z-index: 40;
+        display: block;
+        width: 320px;
+    }
+}
+
+.betslip__container {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
 }

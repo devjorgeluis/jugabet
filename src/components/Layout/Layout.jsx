@@ -281,6 +281,13 @@ const Layout = () => {
                                 <Outlet context={{ isSlotsOnly, isMobile, topGames, topArcade, topCasino, topLiveCasino }} />
                             )}
                         </div>
+                        <div className="layout__right">
+                            <div className="betslip">
+                                <div className="betslip__container">
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
