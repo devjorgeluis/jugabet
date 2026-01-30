@@ -48,7 +48,7 @@ const Footer = ({ isSlotsOnly }) => {
                 <div className="footer__section">
                     <ul className="links-setting" data-id="links">
                         {menuItems.map((menu, index) => (
-                            <li key={index} className="links-setting__item" onClick={() => navigate("/casino")}>
+                            <li key={index} className="links-setting__item" onClick={() => navigate(menu.href)}>
                                 <a className="links-setting__link caption-1-regular">
                                     {menu.name}
                                 </a>

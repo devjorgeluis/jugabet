@@ -429,7 +429,11 @@ const Home = () => {
         />
       ) : (
         <>
-          {!selectedProvider && <Slideshow />}
+          { !selectedProvider && 
+            <div className="section section--top promo-bar">
+              <Slideshow />
+            </div>
+          }
 
           {
             selectedProvider &&

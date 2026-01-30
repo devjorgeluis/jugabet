@@ -60,49 +60,47 @@ const Slideshow = () => {
   }, []);
 
   return (
-    <div className="section section--top promo-bar">
-      <div className="promo-bar__slider splide splide--loop splide--ltr splide--draggable is-active is-overflow is-initialized">
-        <Swiper
-          ref={swiperRef}
-          modules={[Navigation, Autoplay]}
-          spaceBetween={10}
-          slidesPerView={3.5}
-          breakpoints={{
-            320: { slidesPerView: 1.5, spaceBetween: 10 },
-            768: { slidesPerView: 3.5, spaceBetween: 10 },
-          }}
-          loop={true}
-          autoplay={{
-            delay: 5000,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          navigation={!isMobile ? {
-            nextEl: '.desktop-next',
-            prevEl: '.desktop-prev',
-          } : false}
-          onSlideChange={(swiper) => handleSlideChange(swiper)}
-          onInit={(swiper) => {
-            setCurrentSlide(swiper.realIndex + 1);
-          }}
-          className="splide__slide splide__slide--clone"
-        >
-          {slides.map((slide) => (
-            <SwiperSlide key={slide.id}>
-              <a className="banner">
-                <img
-                  src={slide.image}
-                  alt={`Banner ${slide.id + 1}`}
-                  style={{
-                    width: "100%",
-                    height: "100%"
-                  }}
-                />
-              </a>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </div>
+    <div className="promo-bar__slider splide splide--loop splide--ltr splide--draggable is-active is-overflow is-initialized">
+      <Swiper
+        ref={swiperRef}
+        modules={[Navigation, Autoplay]}
+        spaceBetween={10}
+        slidesPerView={3.5}
+        breakpoints={{
+          320: { slidesPerView: 1.5, spaceBetween: 10 },
+          768: { slidesPerView: 3.5, spaceBetween: 10 },
+        }}
+        loop={true}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        navigation={!isMobile ? {
+          nextEl: '.desktop-next',
+          prevEl: '.desktop-prev',
+        } : false}
+        onSlideChange={(swiper) => handleSlideChange(swiper)}
+        onInit={(swiper) => {
+          setCurrentSlide(swiper.realIndex + 1);
+        }}
+        className="splide__slide splide__slide--clone"
+      >
+        {slides.map((slide) => (
+          <SwiperSlide key={slide.id}>
+            <a className="banner">
+              <img
+                src={slide.image}
+                alt={`Banner ${slide.id + 1}`}
+                style={{
+                  width: "100%",
+                  height: "100%"
+                }}
+              />
+            </a>
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </div>
   );
 };
