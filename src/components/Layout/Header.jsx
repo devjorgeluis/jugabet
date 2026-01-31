@@ -60,7 +60,7 @@ const Header = ({
                 <nav className="header__user-nav">
                     <div className="header__actions">
                         <a className="header__tab">
-                            <span className="header__icon">
+                            <span className="header__icon" onClick={() => navigate("/search")}>
                                 <img src={ImgSearch} />
                             </span>
                         </a>

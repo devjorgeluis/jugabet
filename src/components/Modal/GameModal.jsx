@@ -160,18 +160,18 @@ const GameModal = (props) => {
 
   return (
     <div className="lca-gv d-flex lca-wrapper">
-      <section class="section section--top game-launch" data-gamelaunch-target="fullscreen">
-        <header class="navigation-bar" data-screen-area-detail="game_header">
-          <button class="navigation-bar__left" type="button" aria-label="Go back" onClick={() => handleClose()}>
+      <section className="section section--top game-launch" data-gamelaunch-target="fullscreen">
+        <header className="navigation-bar" data-screen-area-detail="game_header">
+          <button className="navigation-bar__left" type="button" aria-label="Go back" onClick={() => handleClose()}>
             <img src={IconArrowLeft} />
           </button>
-          <div class="navigation-bar__center">
-            <h1 class="navigation-bar__title body-semi-bold">
+          <div className="navigation-bar__center">
+            <h1 className="navigation-bar__title body-semi-bold">
               <i18n-t t="casino-lobby:Joker's Jewels">{props.gameName}</i18n-t>
             </h1>
           </div>
-          <div class="navigation-bar__right navigation-bar__right--group">
-            <button class="button game-launch__fullscreen-toggle" type="button" data-gamelaunch-trigger="fullscreen-toggle">
+          <div className="navigation-bar__right navigation-bar__right--group">
+            <button className="button game-launch__fullscreen-toggle" type="button" data-gamelaunch-trigger="fullscreen-toggle">
               <img src={IconFullScreen} onClick={toggleFullScreen} />
             </button>
           </div>

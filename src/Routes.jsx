@@ -10,7 +10,7 @@ import Profile from "./pages/Profile/Profile";
 import ProfileDetail from "./pages/Profile/ProfileDetail";
 import ProfileHistory from "./pages/Profile/ProfileHistory";
 import ProfileTransaction from "./pages/Profile/ProfileTransaction";
-import NoAuthGamePage from "./pages/NoAuthGamePage";
+import Search from "./pages/Search";
 import NoPage from "./pages/NoPage";
 import Layout from "./components/Layout/Layout";
 
@@ -29,7 +29,7 @@ export default function AppRoutes() {
                 <Route path="/profile/detail" element={<ProfileDetail />} />
                 <Route path="/profile/history" element={<ProfileHistory />} />
                 <Route path="/profile/transaction" element={<ProfileTransaction />} />
-                <Route path="/game-login" element={<NoAuthGamePage gameName="Game" gameImg="" />} />
+                <Route path="/search" element={<Search />} />
                 <Route path="*" element={<NoPage />} />
             </Route>
             <Route path="/login" element={<Login />} />

@@ -179,18 +179,18 @@ const ProfileHistory = () => {
                     <div className="container svelte-fzoequ">
                         {transactions.map((tx, index) => (
                             <div className="wrapper svelte-fzoequ" key={tx.id || index}>
-                                <div class="heading svelte-fzoequ">{formatDateDisplay(tx.date || tx.created_at)}</div>
+                                <div className="heading svelte-fzoequ">{formatDateDisplay(tx.date || tx.created_at)}</div>
                                 <div className="list-wrapper svelte-fzoequ">
                                     <div className="wrapper svelte-1pvn0xe">
                                         <div className="info-wrapper svelte-1pvn0xe">
-                                            <div class="content-left svelte-1pvn0xe">
-                                                <div class="type svelte-1pvn0xe">{tx.type === 'add' ? 'Depositar' : 'No pagado'}</div>
-                                                <div class="description svelte-1pvn0xe">Mercado pago</div>
+                                            <div className="content-left svelte-1pvn0xe">
+                                                <div className="type svelte-1pvn0xe">{tx.type === 'add' ? 'Depositar' : 'No pagado'}</div>
+                                                <div className="description svelte-1pvn0xe">Mercado pago</div>
                                             </div>
-                                            <div class="content-right svelte-1pvn0xe">
-                                                <div class="info svelte-1pvn0xe">
-                                                    <bdi class="amount svelte-1pvn0xe">${formatBalance(tx.amount)}</bdi>
-                                                    <div class="transaction-status svelte-1pvn0xe" style={{ color: tx.type === 'add' ? "#4076d4" : "#f33" }}>{tx.type === 'add' ? "Éxito" : "Falló"}</div>
+                                            <div className="content-right svelte-1pvn0xe">
+                                                <div className="info svelte-1pvn0xe">
+                                                    <bdi className="amount svelte-1pvn0xe">${formatBalance(tx.amount)}</bdi>
+                                                    <div className="transaction-status svelte-1pvn0xe" style={{ color: tx.type === 'add' ? "#4076d4" : "#f33" }}>{tx.type === 'add' ? "Éxito" : "Falló"}</div>
                                                 </div>
                                                 <img src={IconArrowRight} />
                                             </div>

@@ -1,14 +1,36 @@
-import { useContext } from "react";
+import { useContext, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { AppContext } from "../AppContext";
 import { LayoutContext } from "./Layout/LayoutContext";
+import { callApi } from "../utils/Utils";
+import LoadApi from "./Loading/LoadApi";
+import GameCard from "./GameCard";
+import GameModal from "./Modal/GameModal";
 
-const SearchInput = ({
-    txtSearch,
-    setTxtSearch,
-    searchRef,
-    search,
-    isMobile
-}) => {
-    const { setShowMobileSearch } = useContext(LayoutContext);
+import IconSearch from "/src/assets/svg/blue-search.svg";
+import IconClose from "/src/assets/svg/close.svg";
+
+let selectedGameId = null;
+let selectedGameType = null;
+let selectedGameLauncher = null;
+let selectedGameName = null;
+let selectedGameImg = null;
+let pageCurrent = 0;
+
+const SearchInput = () => {
+    const { isLogin, isMobile } = useContext(LayoutContext);
+    const [isSearch, setIsSearch] = useState(false);
+    const [searchFocused, setSearchFocused] = useState(false);
+    const [games, setGames] = useState([]);
+    const [txtSearch, setTxtSearch] = useState("");
+    const searchRef = useRef(null);
+    const [searchDelayTimer, setSearchDelayTimer] = useState();
+    const [gameUrl, setGameUrl] = useState("");
+    const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
+    const navigate = useNavigate();
+    const refGameModal = useRef();
+
+    const { contextData } = useContext(AppContext);
 
     const handleChange = (event) => {
         if (!isMobile) {
@@ -19,54 +41,277 @@ const SearchInput = ({
     };
 
     const handleFocus = () => {
-        if (isMobile) {
-            setShowMobileSearch(true);
+        setSearchFocused(true);
+    };
+
+    const configureImageSrc = (result) => {
+        (result.content || []).forEach((element) => {
+            element.imageDataSrc =
+                element.image_local !== null ? contextData.cdnUrl + element.image_local : element.image_url;
+        });
+    };
+
+    const search = (e) => {
+        const keyword = typeof e === 'string' ? e : (e?.target?.value ?? '');
+        setTxtSearch(keyword);
+
+        if (typeof e === 'string') {
+            do_search(keyword);
+            return;
+        }
+
+        if (navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)) {
+            const kw = e.target.value;
+            do_search(kw);
+        } else {
+            if (
+                (e.keyCode >= 48 && e.keyCode <= 57) ||
+                (e.keyCode >= 65 && e.keyCode <= 90) ||
+                e.keyCode == 8 ||
+                e.keyCode == 46
+            ) {
+                do_search(keyword);
+            }
+        }
+
+        if (e.key === "Enter" || e.keyCode === 13 || e.key === "Escape" || e.keyCode === 27) {
+            searchRef.current?.blur();
         }
     };
 
+    const do_search = (keyword) => {
+        setIsSearch(true);
+        clearTimeout(searchDelayTimer);
+
+        if (keyword == "") {
+            return;
+        }
+
+        setGames([]);
+
+        let pageSize = 100;
+        let searchDelayTimerTmp = setTimeout(function () {
+            callApi(
+                contextData,
+                "GET",
+                "/search-content?keyword=" + txtSearch + "&page_group_code=" + "default_pages_home" + "&length=" + pageSize,
+                callbackSearch,
+                null
+            );
+        }, 1000);
+
+        setSearchDelayTimer(searchDelayTimerTmp);
+    };
+
+    const callbackSearch = (result) => {
+        setIsSearch(false);
+        if (result.status === 500 || result.status === 422) {
+
+        } else {
+            configureImageSrc(result, true);
+            setGames(result.content);
+        }
+    };
+
+    const launchGame = (game, type, launcher) => {
+        // Only show modal when explicitly using modal launcher
+        if (launcher === "modal") {
+            setShouldShowGameModal(true);
+        } else {
+            setShouldShowGameModal(false);
+        }
+        selectedGameId = game?.id != null ? game.id : selectedGameId;
+        selectedGameType = type != null ? type : selectedGameType;
+        selectedGameLauncher = launcher != null ? launcher : selectedGameLauncher;
+        selectedGameName = game?.name || selectedGameName;
+        selectedGameImg = game?.image_local != null ? contextData.cdnUrl + game.image_local : selectedGameImg;
+        callApi(contextData, "GET", "/get-game-url?game_id=" + selectedGameId, callbackLaunchGame, null);
+    };
+
+    const callbackLaunchGame = (result) => {
+        if (result.status == "0") {
+            if (isMobile) {
+                try {
+                    window.location.href = result.url;
+                } catch (err) {
+                    try { window.open(result.url, "_blank", "noopener,noreferrer"); } catch (err) { }
+                }
+                selectedGameId = null;
+                selectedGameType = null;
+                selectedGameLauncher = null;
+                selectedGameName = null;
+                selectedGameImg = null;
+                setGameUrl("");
+                setShouldShowGameModal(false);
+                return;
+            }
+
+            if (selectedGameLauncher === "tab") {
+                try {
+                    window.open(result.url, "_blank", "noopener,noreferrer");
+                } catch (err) {
+                    window.location.href = result.url;
+                }
+                setShouldShowGameModal(false);
+                selectedGameId = null;
+                selectedGameType = null;
+                selectedGameLauncher = null;
+                selectedGameName = null;
+                selectedGameImg = null;
+                setGameUrl("");
+            } else {
+                setGameUrl(result.url);
+                setShouldShowGameModal(true);
+            }
+        }
+    };
+
+    const closeGameModal = () => {
+        selectedGameId = null;
+        selectedGameType = null;
+        selectedGameLauncher = null;
+        selectedGameName = null;
+        selectedGameImg = null;
+        setGameUrl("");
+        setShouldShowGameModal(false);
+
+        try {
+            const el = document.getElementsByClassName("game-view-container")[0];
+            if (el) {
+                el.classList.add("d-none");
+                el.classList.remove("fullscreen");
+                el.classList.remove("with-background");
+            }
+            const iframeWrapper = document.getElementById("game-window-iframe");
+            if (iframeWrapper) iframeWrapper.classList.add("d-none");
+        } catch (err) {
+            // ignore DOM errors
+        }
+        try { getPage('casino'); } catch (e) { }
+    };
+
     return (
-        <div className="col-span-12 group flex-grow min-w-0 text-base mb-1.5 formkit-outer !mb-0">
-            <div className="mb-2 flex flex-col items-start justify-start mb-1.5 formkit-wrapper">
-                <div className="text-base relative w-full h-12 rounded-lg bg-dark-grey-950/50 flex items-stretch border border-theme-secondary/10 focus-within:ring-2 [&_svg]:text-dark-grey-50/20 [&_svg]:focus-within:text-dark-grey-50/50 group-data-[disabled]:!cursor-not-allowed group-data-[invalid]:border-theme-status-error/20 group-data-[invalid]:bg-theme-status-error/5 formkit-inner">
-                    <label
-                        htmlFor="search-input"
-                        className="absolute left-3 top-1/2 -translate-y-1/2 flex shrink-0 items-center h-6 w-6 text-dark-grey-50/20 peer-focus:text-dark-grey-50/50 formkit-prefixIcon formkit-icon"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 16" className="w-full h-full">
-                            <path
-                                d="M6.5,13.02c-1.41,0-2.82-.54-3.89-1.61-1.04-1.04-1.61-2.42-1.61-3.89s.57-2.85,1.61-3.89c2.14-2.14,5.63-2.14,7.78,0,1.04,1.04,1.61,2.42,1.61,3.89s-.57,2.85-1.61,3.89c-1.07,1.07-2.48,1.61-3.89,1.61Zm0-10c-1.15,0-2.3,.44-3.18,1.32-.85,.85-1.32,1.98-1.32,3.18s.47,2.33,1.32,3.18c1.75,1.75,4.61,1.75,6.36,0,.85-.85,1.32-1.98,1.32-3.18s-.47-2.33-1.32-3.18c-.88-.88-2.03-1.32-3.18-1.32Z"
-                                fill="currentColor"
-                            />
-                            <path
-                                d="M13.5,15c-.13,0-.26-.05-.35-.15l-3.38-3.38c-.2-.2-.2-.51,0-.71,.2-.2,.51-.2,.71,0l3.38,3.38c.2,.2,.2,.51,0,.71-.1,.1-.23,.15-.35,.15Z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </label>
+        <>
+            {shouldShowGameModal && selectedGameId !== null ? (
+                <GameModal
+                    gameUrl={gameUrl}
+                    gameName={selectedGameName}
+                    gameImg={selectedGameImg}
+                    reload={(gameData) => {
+                        if (gameData && gameData.id) {
+                            const game = {
+                                id: gameData.id,
+                                name: selectedGameName,
+                                image_local: selectedGameImg?.replace(contextData.cdnUrl, '')
+                            };
+                            launchGame(game, selectedGameType, selectedGameLauncher);
+                        } else if (selectedGameId) {
+                            const game = {
+                                id: selectedGameId,
+                                name: selectedGameName,
+                                image_local: selectedGameImg?.replace(contextData.cdnUrl, '')
+                            };
+                            launchGame(game, selectedGameType, selectedGameLauncher);
+                        }
+                    }}
+                    launchInNewTab={() => {
+                        if (selectedGameId) {
+                            const game = {
+                                id: selectedGameId,
+                                name: selectedGameName,
+                                image_local: selectedGameImg?.replace(contextData.cdnUrl, '')
+                            };
+                            launchGame(game, selectedGameType, "tab");
+                        }
+                    }}
+                    ref={refGameModal}
+                    onClose={closeGameModal}
+                    isMobile={isMobile}
+                    gameId={selectedGameId}
+                    gameType={selectedGameType}
+                    gameLauncher={selectedGameLauncher}
+                />
+            ) : <>
+                <div className="search">
+                    <section className="section section--top section--cover">
+                        <header className="navigation-bar">
+                            <button className="navigation-bar__left" type="button" onClick={() => navigate("/")}>
+                                <img src={IconClose} alt="Close" />
+                            </button>
 
-                    <input
-                        id="search-input"
-                        type="text"
-                        placeholder="Buscar"
-                        className="peer appearance-none outline-none bg-transparent grow w-full h-12 px-3 py-4 pl-12 text-base text-dark-grey-50 font-medium placeholder:text-dark-grey-50/50 focus:ring-0 [&::selection]:bg-primary-800 formkit-input"
-                        aria-label="Buscar juegos"
-                        ref={searchRef}
-                        value={txtSearch}
-                        onChange={handleChange}
-                        onKeyUp={search}
-                        onFocus={handleFocus}
-                    />
-
-                    <label
-                        htmlFor="search-input"
-                        className="block text-white text-base lg:text-sm !leading-5 mb-2 formkit-label hidden md:invisible md:block"
-                        style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', left: 'calc(-0.25em + 48px)' }}
-                    >
-                        Filtrar juegos
-                    </label>
+                            <h1 className="navigation-bar__center body-semi-bold">
+                                <i18n-t>Buscar</i18n-t>
+                            </h1>
+                        </header>
+                        <div className="search__wrapper">
+                            <div className="search__field">
+                                <fieldset className="text-field">
+                                    <input
+                                        id="search-input"
+                                        type="text"
+                                        className="text-field__input"
+                                        aria-label="Buscar juegos"
+                                        ref={searchRef}
+                                        value={txtSearch}
+                                        onChange={handleChange}
+                                        onKeyUp={search}
+                                        onFocus={handleFocus}
+                                        onBlur={() => setSearchFocused(false)}
+                                    />
+                                    <label
+                                        className={`text-field__label ${searchFocused || txtSearch ? 'text-field__label--active' : ''}`}
+                                        htmlFor="search-input"
+                                    >
+                                        Buscá tu juego
+                                    </label>
+                                    <img className="text-field__icon text-field__prepend" src={IconSearch} />
+                                </fieldset>
+                            </div>
+                        </div>
+                        {isSearch ? (
+                            <div className="load-container">
+                                <LoadApi />
+                            </div>
+                        ) : (
+                            games.length > 0 ? (
+                                <div className="games-list">
+                                    {games.map((game) => (
+                                        <GameCard
+                                            key={game.id}
+                                            id={game.id}
+                                            title={game.name}
+                                            imageSrc={
+                                                game.image_local !== null
+                                                    ? contextData.cdnUrl + game.image_local
+                                                    : game.image_url
+                                            }
+                                            game={game}
+                                            onGameClick={(g) => {
+                                                if (isLogin) {
+                                                    launchGame(g, "slot", "modal");
+                                                } else {
+                                                    handleLoginClick();
+                                                }
+                                            }}
+                                        />
+                                    ))}
+                                </div>
+                            ) : txtSearch !== "" && games.length === 0 && (
+                                <div className="search-empty-state empty-state">
+                                    <img className="empty-state__icon" src={IconSearch} />
+                                    <h3 className="empty-state__title">
+                                        <i18n-t>No encontramos nada para ddds</i18n-t>
+                                    </h3>
+                                    <p className="empty-state__text">
+                                        <i18n-t>Asegúrate de que todas las palabras estén escritas correctamente o prueba con palabras clave diferentes</i18n-t>
+                                    </p>
+                                </div>
+                            )
+                        )}
+                    </section>
                 </div>
-            </div>
-        </div>
+            </>}
+        </>
     );
 };
 

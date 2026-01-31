@@ -34,7 +34,7 @@ const Layout = () => {
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
     const [isSmallScreen, setIsSmallScreen] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
-
+    const [isGameActive, setIsGameActive] = useState(false);
     const [shouldShowGameModal, setShouldShowGameModal] = useState(false);
     const [gameModalData, setGameModalData] = useState({
         gameUrl: "",
@@ -265,7 +265,7 @@ const Layout = () => {
                         </div>
                         <div className="layout__center">
                             {!shouldShowGameModal && (
-                                <Outlet context={{ isSlotsOnly, isMobile, isLogin, topGames, topArcade, topCasino, topLiveCasino }} />
+                                <Outlet context={{ isSlotsOnly, isMobile, isLogin, topGames, topArcade, topCasino, topLiveCasino, setIsGameActive }} />
                             )}
                         </div>
                         <div className="layout__right">

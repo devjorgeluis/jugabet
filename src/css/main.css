@@ -8791,3 +8791,50 @@ html[dir=rtl] .info-wrapper.svelte-1pvn0xe .content-right .icon.svelte-1pvn0xe {
 .pagination img {
     cursor: pointer;
 }
+
+.search__wrapper {
+    padding: calc(4px * 3) calc(4px * 3) calc(4px * 2);
+}
+
+.search-empty-state {
+    padding-block: calc(36px) calc(60px);
+}
+
+.empty-state, .empty-state__icon {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.empty-state {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    padding: 20px 12px 24px;
+    text-align: center;
+}
+
+.empty-state__title, .empty-state__title--lg {
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.empty-state__title {
+    color: #010814;
+    font-size: 18px;
+    line-height: 22px;
+    margin-bottom: 4px;
+}
+
+.empty-state__text {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: -.32px;
+    line-height: 20px;
+    text-transform: none;
+}
