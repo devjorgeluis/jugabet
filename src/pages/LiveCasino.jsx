@@ -5,7 +5,7 @@ import { LayoutContext } from "../components/Layout/LayoutContext";
 import { NavigationContext } from "../components/Layout/NavigationContext";
 import { callApi } from "../utils/Utils";
 import GameCard from "/src/components/GameCard";
-import Slideshow from "../components/Home/Slideshow";
+import Slideshow from "../components/LiveCasino/Slideshow";
 import GameModal from "../components/Modal/GameModal";
 import HotGameSlideshow from "../components/Home/HotGameSlideshow";
 import ProviderContainer from "../components/ProviderContainer";
