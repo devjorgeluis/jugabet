@@ -4,6 +4,8 @@ import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
 import Footer from "../../components/Layout/Footer";
 import LoadApi from "../../components/Loading/LoadApi";
+import IconArrowLeft from "/src/assets/svg/arrow-left.svg";
+import IconArrowRight from "/src/assets/svg/arrow-right.svg";
 
 const ProfileHistory = () => {
     const navigate = useNavigate();
@@ -17,14 +19,14 @@ const ProfileHistory = () => {
         const nextMonthFirst = new Date(now.getFullYear(), now.getMonth() + 1, 1);
         return {
             dateFrom: formatDateForInput(currentMonthFirst),
-            dateTo: formatDateForInput(nextMonthFirst)
+            dateTo: formatDateForInput(nextMonthFirst),
         };
     };
 
     const formatDateForInput = (date) => {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
     };
 
@@ -33,15 +35,15 @@ const ProfileHistory = () => {
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
         start: 0,
-        length: 10,
+        length: 5,
         totalRecords: 0,
         currentPage: 1,
     });
 
     const formatDateDisplay = (dateString) => {
-        if (!dateString) return "-";
+        if (!dateString) return "—";
         const date = new Date(dateString);
-        if (isNaN(date.getTime())) return "-";
+        if (isNaN(date.getTime())) return "—";
 
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -52,21 +54,11 @@ const ProfileHistory = () => {
 
     const formatBalance = (value) => {
         const num = parseFloat(value);
-        return num.toLocaleString('de-DE', {
+        if (isNaN(num)) return "—";
+        return num.toLocaleString("de-DE", {
             minimumFractionDigits: 2,
-            maximumFractionDigits: 2
+            maximumFractionDigits: 2,
         });
-    };
-
-    const formatOperation = (operation) => {
-        return operation === "change_balance" ? "change balance" : operation;
-    };
-
-    const handleDateChange = (e, name) => {
-        setFilters((prev) => ({
-            ...prev,
-            [name]: e.target.value
-        }));
     };
 
     const handlePageChange = (page) => {
@@ -80,15 +72,14 @@ const ProfileHistory = () => {
     const fetchHistory = () => {
         setLoading(true);
 
-        let queryParams = new URLSearchParams({
+        const queryParams = new URLSearchParams({
             start: pagination.start,
             length: pagination.length,
             ...(filters.dateFrom && { date_from: filters.dateFrom }),
             ...(filters.dateTo && { date_to: filters.dateTo }),
-            type: "slot"
         }).toString();
 
-        let apiEndpoint = `/get-history?${queryParams}`;
+        const apiEndpoint = `/get-transactions?${queryParams}`;
 
         callApi(
             contextData,
@@ -126,10 +117,10 @@ const ProfileHistory = () => {
     }, [pagination.start, pagination.length]);
 
     useEffect(() => {
-        setPagination(prev => ({
+        setPagination((prev) => ({
             ...prev,
             start: 0,
-            currentPage: 1
+            currentPage: 1,
         }));
     }, [filters.dateFrom, filters.dateTo]);
 
@@ -165,222 +156,68 @@ const ProfileHistory = () => {
 
     return (
         <>
-            <div className="container py-10 pb-6 sm:pb-12 sm:pt-16">
-                <div className="grid grid-cols-1 [grid-template-areas:'heading'_'filters'_'content']">
-                    <h1 className="mb-6 text-center text-5xl font-bold -tracking-[0.72px] text-white sm:mb-12 sm:-tracking-[0.96px]">
-                        Historial de transacciones
+            <section className="section section--top section--cover">
+                <header className="navigation-bar">
+                    <button
+                        className="navigation-bar__left"
+                        type="button"
+                        onClick={() => navigate(-1)}
+                    >
+                        <img src={IconArrowLeft} alt="Volver" />
+                    </button>
+
+                    <h1 className="navigation-bar__center body-semi-bold">
+                        Historial de pagos
                     </h1>
+                </header>
 
-                    <div className="mb-6 grid w-full grid-cols-12 gap-2 [grid-area:filters] sm:mb-12 lg:flex lg:flex-row lg:justify-between lg:gap-4">
-                        <div className="first-of-type:col-span-12 col-span-12">
-                            <div className="flex gap-2">
-                                <div className="col-span-12 group flex-grow min-w-0 text-base mb-1.5 data-[disabled]:select-none data-[disabled]:opacity-50 data-[disabled]:pointer-events-none formkit-outer filter-date !-mb-1.5 lg:min-w-[12.25rem]"
-                                    data-family="text" data-type="date" data-suffix-icon="true" data-floating-label="true">
-                                    <div className="mb-2 flex flex-col items-start justify-start mb-1.5 formkit-wrapper">
-                                        <div className="text-base relative w-full h-12 rounded-lg bg-dark-grey-950/50 flex items-stretch border border-theme-secondary/10 focus-within:ring-2 [&_svg]:text-dark-grey-50/20 [&_svg]:focus-within:text-dark-grey-50/50 group-data-[disabled]:!cursor-not-allowed group-data-[invalid]:border-theme-status-error/20 group-data-[invalid]:bg-theme-status-error/5 [.bg-dark-grey-700_&]:bg-dark-grey-600 text-dark-grey-50 formkit-inner">
-                                            <input
-                                                className="peer appearance-none outline-none [color-scheme:light] placeholder:text-dark-grey-50/50 text-base text-dark-grey-50 font-medium min-h-5 bg-transparent grow w-full h-12 border-none p-3 py-4 focus:ring-0 focus:text-dark-grey-50 data-[placeholder]:max-w-full data-[placeholder]:text-ellipsis data-[placeholder]:overflow-hidden group-data-[invalid]:text-theme-status-error group-data-[empty]:text-dark-grey-50 group-data-[prefix-icon]:!pl-12 [&::selection]:bg-primary-800 !min-h-12 [&::-webkit-inner-spin-button]:hidden [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:h-[100%] [&::-webkit-calendar-picker-indicator]:w-[70%] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 formkit-input"
-                                                type="date"
-                                                name="startDate"
-                                                id="input_30"
-                                                value={filters.dateFrom}
-                                                onChange={(e) => handleDateChange(e, 'dateFrom')}
-                                            />
-                                            <label className="block text-white text-base lg:text-sm !leading-5 mb-2 formkit-label" htmlFor="input_30"
-                                                style={{
-                                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                                    left: "calc(-0.25em + 12px)",
-                                                }}
-                                            >
-                                                Fecha de inicio
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="col-span-12 group flex-grow min-w-0 text-base mb-1.5 data-[disabled]:select-none data-[disabled]:opacity-50 data-[disabled]:pointer-events-none formkit-outer !-mb-1.5 data-[disabled]:!opacity-100 lg:min-w-[12.25rem]"
-                                    data-family="text" data-type="date" data-suffix-icon="true" data-floating-label="true">
-                                    <div className="mb-2 flex flex-col items-start justify-start mb-1.5 formkit-wrapper">
-                                        <div className="text-base relative w-full h-12 rounded-lg bg-dark-grey-950/50 flex items-stretch border border-theme-secondary/10 focus-within:ring-2 [&_svg]:text-dark-grey-50/20 [&_svg]:focus-within:text-dark-grey-50/50 group-data-[disabled]:!cursor-not-allowed group-data-[invalid]:border-theme-status-error/20 group-data-[invalid]:bg-theme-status-error/5 [.bg-dark-grey-700_&]:bg-dark-grey-600 text-dark-grey-50 formkit-inner">
-                                            <input
-                                                className="peer appearance-none outline-none [color-scheme:light] placeholder:text-dark-grey-50/50 text-base text-dark-grey-50 font-medium min-h-5 bg-transparent grow w-full h-12 border-none p-3 py-4 focus:ring-0 focus:text-dark-grey-50 data-[placeholder]:max-w-full data-[placeholder]:text-ellipsis data-[placeholder]:overflow-hidden group-data-[invalid]:text-theme-status-error group-data-[empty]:text-dark-grey-50 group-data-[prefix-icon]:!pl-12 [&::selection]:bg-primary-800 !min-h-12 [&::-webkit-inner-spin-button]:hidden [&::-webkit-date-and-time-value]:text-left [&::-webkit-calendar-picker-indicator]:h-[100%] [&::-webkit-calendar-picker-indicator]:w-[70%] [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:top-0 [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-0 formkit-input"
-                                                type="date"
-                                                name="endDate"
-                                                id="input_31"
-                                                value={filters.dateTo}
-                                                onChange={(e) => handleDateChange(e, 'dateTo')}
-                                            />
-                                            <label className="block text-white text-base lg:text-sm !leading-5 mb-2 formkit-label" htmlFor="input_31"
-                                                style={{
-                                                    backgroundColor: "rgba(0, 0, 0, 0.5)",
-                                                    left: "calc(-0.25em + 12px)",
-                                                }}
-                                            >
-                                                Fecha final
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="[grid-area:content]">
-                        {loading ? (
-                            <div className="flex justify-center items-center py-10">
-                                <LoadApi />
-                            </div>
-                        ) : (
-                            <div className="border-dark-grey-700 rounded-md border">
-                                <div className="relative overflow-x-auto">
-                                    <table className="min-w-full table-fixed dark:divide-gray-700 divide-dark-grey-700 divide-y">
-                                        <thead className="relative">
-                                            <tr>
-                                                <th scope="col" className="rtl:text-right text-left whitespace-nowrap py-3.5 pl-4 pr-3.5 text-base font-normal !leading-normal first-of-type:pr-4 last-of-type:pr-4 lg:text-sm lg:font-bold [&_button]:m-0 [&_button]:gap-2 [&_button]:p-0 [&_button]:font-normal [&_button]:!leading-normal [&_button]:!text-white [&_button]:hover:bg-transparent [&_button]:lg:text-sm [&_button]:lg:font-bold [&_svg]:h-4 [&_svg]:w-4 px-4 py-3.5 text-white font-bold text-sm !leading-tight">
-                                                    <span>Fecha</span>
-                                                </th>
-                                                <th scope="col" className="rtl:text-right text-left whitespace-nowrap py-3.5 pl-4 pr-3.5 text-base font-normal !leading-normal first-of-type:pr-4 last-of-type:pr-4 lg:text-sm lg:font-bold [&_button]:m-0 [&_button]:gap-2 [&_button]:p-0 [&_button]:font-normal [&_button]:!leading-normal [&_button]:!text-white [&_button]:hover:bg-transparent [&_button]:lg:text-sm [&_button]:lg:font-bold [&_svg]:h-4 [&_svg]:w-4 px-4 py-3.5 text-white font-bold text-sm !leading-tight">
-                                                    <span>Operación</span>
-                                                </th>
-                                                <th scope="col" className="rtl:text-right text-left whitespace-nowrap py-3.5 pl-4 pr-3.5 text-base font-normal !leading-normal first-of-type:pr-4 last-of-type:pr-4 lg:text-sm lg:font-bold [&_button]:m-0 [&_button]:gap-2 [&_button]:p-0 [&_button]:font-normal [&_button]:!leading-normal [&_button]:!text-white [&_button]:hover:bg-transparent [&_button]:lg:text-sm [&_button]:lg:font-bold [&_svg]:h-4 [&_svg]:w-4 px-4 py-3.5 text-white font-bold text-sm !leading-tight">
-                                                    <span>Monto</span>
-                                                </th>
-                                                <th scope="col" className="rtl:text-right text-left whitespace-nowrap py-3.5 pl-4 pr-3.5 text-base font-normal !leading-normal first-of-type:pr-4 last-of-type:pr-4 lg:text-sm lg:font-bold [&_button]:m-0 [&_button]:gap-2 [&_button]:p-0 [&_button]:font-normal [&_button]:!leading-normal [&_button]:!text-white [&_button]:hover:bg-transparent [&_button]:lg:text-sm [&_button]:lg:font-bold [&_svg]:h-4 [&_svg]:w-4 px-4 py-3.5 text-white font-bold text-sm !leading-tight">
-                                                    <span>Balance Previo</span>
-                                                </th>
-                                                <th scope="col" className="rtl:text-right text-left whitespace-nowrap py-3.5 pl-4 pr-3.5 text-base font-normal !leading-normal first-of-type:pr-4 last-of-type:pr-4 lg:text-sm lg:font-bold [&_button]:m-0 [&_button]:gap-2 [&_button]:p-0 [&_button]:font-normal [&_button]:!leading-normal [&_button]:!text-white [&_button]:hover:bg-transparent [&_button]:lg:text-sm [&_button]:lg:font-bold [&_svg]:h-4 [&_svg]:w-4 px-4 py-3.5 text-white font-bold text-sm !leading-tight">
-                                                    <span>Balance Posterior</span>
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="dark:divide-gray-800 divide-dark-grey-800 divide-y">
-                                            {transactions.length > 0 ? (
-                                                transactions.map((transaction, index) => (
-                                                    <tr key={index} className="hover:bg-dark-grey-900/50">
-                                                        <td className="whitespace-nowrap py-4 pl-4 pr-3.5 text-sm !leading-tight first-of-type:pr-4 last-of-type:pr-4 lg:pl-6 text-white">
-                                                            {formatDateDisplay(transaction.created_at)}
-                                                        </td>
-                                                        <td className="whitespace-nowrap py-4 pl-4 pr-3.5 text-sm !leading-tight first-of-type:pr-4 last-of-type:pr-4 lg:pl-6 text-white">
-                                                            {formatOperation(transaction.operation)}
-                                                        </td>
-                                                        <td className="whitespace-nowrap py-4 pl-4 pr-3.5 text-sm !leading-tight first-of-type:pr-4 last-of-type:pr-4 lg:pl-6 text-white">
-                                                            {formatBalance(transaction.value || transaction.amount || 0)}
-                                                        </td>
-                                                        <td className="whitespace-nowrap py-4 pl-4 pr-3.5 text-sm !leading-tight first-of-type:pr-4 last-of-type:pr-4 lg:pl-6 text-white">
-                                                            {formatBalance(transaction.value_before) || 0}
-                                                        </td>
-                                                        <td className="whitespace-nowrap py-4 pl-4 pr-3.5 text-sm !leading-tight first-of-type:pr-4 last-of-type:pr-4 lg:pl-6 text-white">
-                                                            {formatBalance(transaction.value_after) || 0}
-                                                        </td>
-                                                    </tr>
-                                                ))
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan="5">
-                                                        <div className="flex flex-1 flex-col items-center justify-center px-6 py-14 sm:px-14">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" className="iconify iconify--tabler dark:text-gray-500 mx-auto mb-4 h-5 w-5 text-white" width="1em" height="1em" viewBox="0 0 24 24">
-                                                                <path fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4L4 8l8 4l8-4zm-8 8l8 4l8-4M4 16l8 4l8-4"></path>
-                                                            </svg>
-                                                            <p className="dark:text-white text-center text-sm !leading-tight text-white">
-                                                                No hay transacciones disponibles.
-                                                            </p>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                                {/* Pagination */}
-                                {transactions.length > 0 && totalPages > 1 && (
-                                    <div className="flex items-center justify-between border-t border-dark-grey-700 px-4 py-3 sm:px-6">
-                                        <div className="flex flex-1 justify-between sm:hidden">
-                                            <button
-                                                onClick={handlePrevPage}
-                                                disabled={pagination.currentPage === 1}
-                                                className="relative inline-flex items-center rounded-md border border-dark-grey-700 bg-dark-grey-900 px-4 py-2 text-sm font-medium text-white hover:bg-dark-grey-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                Anterior
-                                            </button>
-                                            <button
-                                                onClick={handleNextPage}
-                                                disabled={pagination.currentPage === totalPages}
-                                                className="relative ml-3 inline-flex items-center rounded-md border border-dark-grey-700 bg-dark-grey-900 px-4 py-2 text-sm font-medium text-white hover:bg-dark-grey-800 disabled:opacity-50 disabled:cursor-not-allowed"
-                                            >
-                                                Siguiente
-                                            </button>
-                                        </div>
-                                        <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                            <div>
-                                                <p className="text-sm text-white">
-                                                    Mostrando <span className="font-medium">{pagination.start + 1}</span> a{' '}
-                                                    <span className="font-medium">
-                                                        {Math.min(pagination.start + pagination.length, pagination.totalRecords)}
-                                                    </span>{' '}
-                                                    de <span className="font-medium">{pagination.totalRecords}</span> resultados
-                                                </p>
+                {loading ? (
+                    <LoadApi />
+                ) : transactions.length === 0 ? (
+                    <div className="no-results">No hay transacciones en el período seleccionado</div>
+                ) : (
+                    <div className="container svelte-fzoequ">
+                        {transactions.map((tx, index) => (
+                            <div className="wrapper svelte-fzoequ" key={tx.id || index}>
+                                <div class="heading svelte-fzoequ">{formatDateDisplay(tx.date || tx.created_at)}</div>
+                                <div className="list-wrapper svelte-fzoequ">
+                                    <div className="wrapper svelte-1pvn0xe">
+                                        <div className="info-wrapper svelte-1pvn0xe">
+                                            <div class="content-left svelte-1pvn0xe">
+                                                <div class="type svelte-1pvn0xe">{tx.type === 'add' ? 'Depositar' : 'No pagado'}</div>
+                                                <div class="description svelte-1pvn0xe">Mercado pago</div>
                                             </div>
-                                            <div>
-                                                <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-                                                    <button
-                                                        onClick={handleFirstPage}
-                                                        disabled={pagination.currentPage === 1}
-                                                        className="relative inline-flex items-center rounded-l-md px-2 py-2 text-white ring-1 ring-inset ring-dark-grey-700 hover:bg-dark-grey-800 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        <span className="sr-only">Primera</span>
-                                                        «
-                                                    </button>
-                                                    <button
-                                                        onClick={handlePrevPage}
-                                                        disabled={pagination.currentPage === 1}
-                                                        className="relative inline-flex items-center px-2 py-2 text-white ring-1 ring-inset ring-dark-grey-700 hover:bg-dark-grey-800 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        <span className="sr-only">Anterior</span>
-                                                        ‹
-                                                    </button>
-
-                                                    {visiblePages.map((page) => (
-                                                        <button
-                                                            key={page}
-                                                            onClick={() => handlePageChange(page)}
-                                                            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ring-1 ring-inset ring-dark-grey-700 focus:z-20 focus:outline-offset-0 ${pagination.currentPage === page
-                                                                    ? 'bg-theme-secondary-500 text-white'
-                                                                    : 'text-white hover:bg-dark-grey-800'
-                                                                }`}
-                                                        >
-                                                            {page}
-                                                        </button>
-                                                    ))}
-
-                                                    <button
-                                                        onClick={handleNextPage}
-                                                        disabled={pagination.currentPage === totalPages}
-                                                        className="relative inline-flex items-center px-2 py-2 text-white ring-1 ring-inset ring-dark-grey-700 hover:bg-dark-grey-800 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        <span className="sr-only">Siguiente</span>
-                                                        ›
-                                                    </button>
-                                                    <button
-                                                        onClick={handleLastPage}
-                                                        disabled={pagination.currentPage === totalPages}
-                                                        className="relative inline-flex items-center rounded-r-md px-2 py-2 text-white ring-1 ring-inset ring-dark-grey-700 hover:bg-dark-grey-800 focus:z-20 focus:outline-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                    >
-                                                        <span className="sr-only">Última</span>
-                                                        »
-                                                    </button>
-                                                </nav>
+                                            <div class="content-right svelte-1pvn0xe">
+                                                <div class="info svelte-1pvn0xe">
+                                                    <bdi class="amount svelte-1pvn0xe">${formatBalance(tx.amount)}</bdi>
+                                                    <div class="transaction-status svelte-1pvn0xe" style={{ color: tx.type === 'add' ? "#4076d4" : "#f33" }}>{tx.type === 'add' ? "Éxito" : "Falló"}</div>
+                                                </div>
+                                                <img src={IconArrowRight} />
                                             </div>
                                         </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
-                        )}
+                        ))}
                     </div>
+                )}
+
+                <div className="pagination">
+                    <img src={IconArrowRight} style={{ transform: "rotate(180deg)" }} onClick={handlePrevPage} disabled={pagination.currentPage <= 1 || totalPages <= 1} />
+
+                    {totalPages > 0 && visiblePages.map((page) => (
+                        <span
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                        >
+                            {page}
+                        </span>
+                    ))}
+                    <img src={IconArrowRight} onClick={handleNextPage} disabled={pagination.currentPage >= totalPages || totalPages <= 1} />
                 </div>
-                
-                <Footer />
-            </div>
+            </section>
+
+            <Footer />
         </>
     );
 };

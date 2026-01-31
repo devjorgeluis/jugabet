@@ -109,7 +109,7 @@ const Account = () => {
                                 </a>
                             </li>
                             <li className="list-view__item list-view__item--icon">
-                                <a className="list-cell" data-id="payment-history" href="/payment-history">
+                                <a className="list-cell" onClick={() => navigate("/profile/history")}>
                                     <div className="list-cell__icon">
                                         <img src={IconHistory} alt="History" />
                                     </div>
