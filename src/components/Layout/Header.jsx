@@ -74,7 +74,7 @@ const Header = ({
                                         <img src={ImgAccount} />
                                     </span>
                                     <div className="header__group">
-                                        <bdi className="header__label">$ {formatBalance(userBalance)}</bdi>
+                                        <bdi className="header__label">$ {formatBalance(userBalance || 0)}</bdi>
                                     </div>
                                 </a>
                             </> :

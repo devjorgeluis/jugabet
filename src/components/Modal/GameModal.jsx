@@ -1,153 +1,202 @@
-import { useContext, useState, useEffect } from "react";
-import { AppContext } from "../../AppContext";
-import LoadCasino from "../Loading/LoadCasino";
+import { useState, useEffect, useContext, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { NavigationContext } from "../Layout/NavigationContext";
+import Footer from "../Layout/Footer";
+import IconArrowLeft from "/src/assets/svg/arrow-left.svg";
+import IconFullScreen from "/src/assets/svg/full-screen.svg";
 
-const GameModal = ({
-  gameUrl,
-  gameName,
-  gameImg,
-  provider,
-  onClose,
-  isMobile,
-  launchInNewTab,
-}) => {
-  const { contextData } = useContext(AppContext);
+const GameModal = (props) => {
+  const navigate = useNavigate();
+  const [url, setUrl] = useState(null);
   const [iframeLoaded, setIframeLoaded] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const iframeRef = useRef(null);
+  const gameViewContainerRef = useRef(null);
+  const { setShowFullDivLoading } = useContext(NavigationContext);
 
   useEffect(() => {
-    if (isMobile && gameUrl) {
-      window.location.href = gameUrl;
+    const gameViewContainer = document.querySelector(".game-launch__container");
+    if (gameViewContainer) {
+      gameViewContainerRef.current = gameViewContainer;
     }
-  }, [gameUrl, isMobile]);
+  }, []);
 
-  const toggleFullscreen = () => {
-    const elem = document.documentElement;
+  useEffect(() => {
+    if (props.gameUrl !== null && props.gameUrl !== "") {
+      if (props.isMobile) {
+        window.location.href = props.gameUrl;
+      } else {
+        let gameViewContainer = gameViewContainerRef.current;
+        if (!gameViewContainer) {
+          gameViewContainer = document.querySelector(".game-launch__container");
+          gameViewContainerRef.current = gameViewContainer;
+        }
+
+        if (gameViewContainer) {
+          gameViewContainer.classList.remove("d-none");
+        } else {
+          console.warn("Game view container not found");
+        }
+
+        setUrl(props.gameUrl);
+        setIframeLoaded(false);
+      }
+    }
+  }, [props.gameUrl, props.isMobile]);
+
+  useEffect(() => {
+    return () => {
+      const gameViewContainer = gameViewContainerRef.current;
+      if (gameViewContainer) {
+        gameViewContainer.classList.add("d-none");
+        gameViewContainer.classList.remove("fullscreen");
+        gameViewContainer.classList.remove("with-background");
+      }
+
+      if (isFullscreen) {
+        exitFullscreen();
+      }
+
+      setUrl(null);
+      setIframeLoaded(false);
+      setIsFullscreen(false);
+    };
+  }, []);
+
+  const toggleFullScreen = () => {
+    const gameWindow = document.querySelector(".game-launch__container") || document.documentElement;
 
     if (!isFullscreen) {
-      if (elem.requestFullscreen) elem.requestFullscreen();
-      else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-      else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
-      setIsFullscreen(true);
+      enterFullscreen(gameWindow);
     } else {
-      if (document.exitFullscreen) document.exitFullscreen();
-      else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-      else if (document.msExitFullscreen) document.msExitFullscreen();
-      setIsFullscreen(false);
+      exitFullscreen();
     }
   };
+
+  const enterFullscreen = (element) => {
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+
+    const gameViewContainer = gameViewContainerRef.current;
+    if (gameViewContainer) {
+      gameViewContainer.classList.add("fullscreen");
+    }
+    setIsFullscreen(true);
+  };
+
+  const exitFullscreen = () => {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+
+    const gameViewContainer = gameViewContainerRef.current;
+    if (gameViewContainer) {
+      gameViewContainer.classList.remove("fullscreen");
+    }
+    setIsFullscreen(false);
+  };
+
+  const exitHandler = () => {
+    if (
+      !document.fullscreenElement &&
+      !document.webkitIsFullScreen &&
+      !document.mozFullScreen &&
+      !document.msFullscreenElement
+    ) {
+      setIsFullscreen(false);
+      const gameViewContainer = gameViewContainerRef.current;
+      if (gameViewContainer) {
+        gameViewContainer.classList.remove("fullscreen");
+      }
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("fullscreenchange", exitHandler);
+    document.addEventListener("webkitfullscreenchange", exitHandler);
+    document.addEventListener("mozfullscreenchange", exitHandler);
+    document.addEventListener("MSFullscreenChange", exitHandler);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", exitHandler);
+      document.removeEventListener("webkitfullscreenchange", exitHandler);
+      document.removeEventListener("mozfullscreenchange", exitHandler);
+      document.removeEventListener("MSFullscreenChange", exitHandler);
+    };
+  }, []);
 
   const handleIframeLoad = () => {
     setIframeLoaded(true);
+    setShowFullDivLoading(false);
   };
 
-  if (isMobile) return null;
+  const handleClose = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    if (isFullscreen) {
+      exitFullscreen();
+    }
+
+    if (props.onClose) {
+      props.onClose();
+    }
+  };
 
   return (
-    <div className="relative w-full">
-      {/* Background Image */}
-      <div className="relative flex h-dvh w-full flex-col max-h-[calc((100svh_+_1.75rem)_-_(var(--header-inner-height,_4.75rem)_+_var(--game-header-height,3.75rem)_+_var(--pwa-prompt-height,0px)_+_2rem))]">
-        <div className="absolute inset-0 -top-20 -z-[1] h-full w-full [mask-image:radial-gradient(50%_65.21%_at_50%_0%,#FFF_0%,rgba(0,0,0,0)_100%)]">
-          <img
-            src={gameImg || "//static.everymatrix.com/cms2/base/_casino/5/5AFF597602068FAA76346A403EB5D02C.jpg"}
-            alt="Game background"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-        </div>
-
-        {/* Header */}
-        <div className="container z-10 grow-0 pt-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold text-white/50">
-              <span className="mr-4 uppercase text-white">{gameName || "Joker's Jewels™"}</span>
-              <span>{provider}</span>
-            </h2>
-
-            <div className="flex gap-2">
-              {/* Fullscreen */}
-              <button
-                onClick={toggleFullscreen}
-                className="rounded-lg bg-theme-secondary-500 p-2 text-theme-primary-950 transition hover:bg-theme-secondary-600 focus:outline-none focus:ring-2 focus:ring-theme-secondary-500 focus:ring-offset-2 focus:ring-offset-transparent"
-                aria-label="Pantalla completa"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M4 8V6a2 2 0 0 1 2-2h2M4 16v2a2 2 0 0 0 2 2h2m8-16h2a2 2 0 0 1 2 2v2m-4 12h2a2 2 0 0 0 2-2v-2" />
-                </svg>
-              </button>
-
-              {/* Favorite */}
-              <button
-                className="rounded-lg bg-theme-secondary-500 p-2 text-theme-primary-950 transition hover:bg-theme-secondary-600 focus:outline-none focus:ring-2 focus:ring-theme-secondary-500 focus:ring-offset-2 focus:ring-offset-transparent"
-                aria-label="Añadir a favoritos"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M19.5 12.572L12 20l-7.5-7.428A5 5 0 1 1 12 6.006a5 5 0 1 1 7.5 6.572" />
-                </svg>
-              </button>
-
-              {/* Close */}
-              <button
-                onClick={onClose}
-                className="rounded-lg bg-theme-secondary-500 p-2 text-theme-primary-950 transition hover:bg-theme-secondary-600 focus:outline-none focus:ring-2 focus:ring-theme-secondary-500 focus:ring-offset-2 focus:ring-offset-transparent"
-                aria-label="Cerrar"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
+    <div className="lca-gv d-flex lca-wrapper">
+      <section class="section section--top game-launch" data-gamelaunch-target="fullscreen">
+        <header class="navigation-bar" data-screen-area-detail="game_header">
+          <button class="navigation-bar__left" type="button" aria-label="Go back" onClick={() => handleClose()}>
+            <img src={IconArrowLeft} />
+          </button>
+          <div class="navigation-bar__center">
+            <h1 class="navigation-bar__title body-semi-bold">
+              <i18n-t t="casino-lobby:Joker's Jewels">{props.gameName}</i18n-t>
+            </h1>
           </div>
-        </div>
-
-        {/* Game Iframe Container */}
-        <div className="container relative flex-1 py-4">
-          {/* Loading Overlay */}
-          {!iframeLoaded && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/30">
-              <LoadCasino />
-            </div>
-          )}
-
-          {/* Only render iframe when gameUrl is valid */}
-          {gameUrl && (
+          <div class="navigation-bar__right navigation-bar__right--group">
+            <button class="button game-launch__fullscreen-toggle" type="button" data-gamelaunch-trigger="fullscreen-toggle">
+              <img src={IconFullScreen} onClick={toggleFullScreen} />
+            </button>
+          </div>
+        </header>
+        <div className="d-none game-launch__container gradient lca-gv-main open">
+          {url && (
             <iframe
-              src={gameUrl}
-              className="h-full w-full rounded-2xl border-0 shadow-2xl"
-              allow="fullscreen; camera; microphone"
-              title={gameName}
+              ref={iframeRef}
+              allow="camera;microphone;fullscreen *; autoplay"
+              src={url}
               onLoad={handleIframeLoad}
-              sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-top-navigation-by-user-activation"
-            />
+              className="game-launch__frame"
+              style={{
+                border: 'none',
+                width: '100%',
+                height: iframeLoaded ? '100%' : '0px',
+                display: iframeLoaded ? 'block' : 'none'
+              }}
+              title={props.gameName || "Casino Game"}
+            ></iframe>
           )}
         </div>
-      </div>
+      </section>
+      
+      <Footer />
     </div>
   );
 };

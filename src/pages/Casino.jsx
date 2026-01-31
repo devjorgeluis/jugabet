@@ -298,6 +298,8 @@ const Casino = () => {
         } catch (err) {
           try { window.open(result.url, "_blank", "noopener,noreferrer"); } catch (err) { }
         }
+        // Reset game active state for mobile
+        setIsGameActive(false);
         selectedGameId = null;
         selectedGameType = null;
         selectedGameLauncher = null;
@@ -314,16 +316,20 @@ const Casino = () => {
         } catch (err) {
           window.location.href = result.url;
         }
+        // Don't reset game active state for tab - modal should stay open
+        // But close modal since we're opening in new tab
+        setShouldShowGameModal(false);
+        setIsGameActive(false);
         selectedGameId = null;
         selectedGameType = null;
         selectedGameLauncher = null;
         selectedGameName = null;
         selectedGameImg = null;
         setGameUrl("");
-        setShouldShowGameModal(false);
       } else {
         setGameUrl(result.url);
         setShouldShowGameModal(true);
+        setIsGameActive(true);
       }
     }
   };
@@ -336,6 +342,11 @@ const Casino = () => {
     selectedGameImg = null;
     setGameUrl("");
     setShouldShowGameModal(false);
+
+    // Reset game active state
+    if (setIsGameActive) {
+      setIsGameActive(false);
+    }
 
     try {
       const el = document.getElementsByClassName("game-view-container")[0];
@@ -403,11 +414,39 @@ const Casino = () => {
           gameUrl={gameUrl}
           gameName={selectedGameName}
           gameImg={selectedGameImg}
-          reload={launchGame}
-          launchInNewTab={() => launchGame(null, null, "tab")}
+          reload={(gameData) => {
+            if (gameData && gameData.id) {
+              const game = {
+                id: gameData.id,
+                name: selectedGameName,
+                image_local: selectedGameImg?.replace(contextData.cdnUrl, '')
+              };
+              launchGame(game, selectedGameType, selectedGameLauncher);
+            } else if (selectedGameId) {
+              const game = {
+                id: selectedGameId,
+                name: selectedGameName,
+                image_local: selectedGameImg?.replace(contextData.cdnUrl, '')
+              };
+              launchGame(game, selectedGameType, selectedGameLauncher);
+            }
+          }}
+          launchInNewTab={() => {
+            if (selectedGameId) {
+              const game = {
+                id: selectedGameId,
+                name: selectedGameName,
+                image_local: selectedGameImg?.replace(contextData.cdnUrl, '')
+              };
+              launchGame(game, selectedGameType, "tab");
+            }
+          }}
           ref={refGameModal}
           onClose={closeGameModal}
           isMobile={isMobile}
+          gameId={selectedGameId}
+          gameType={selectedGameType}
+          gameLauncher={selectedGameLauncher}
         />
       ) : (
         <>
@@ -463,7 +502,7 @@ const Casino = () => {
                     mobileShowMore={mobileShowMore}
                     onGameClick={(g) => {
                       if (isLogin) {
-                        launchGame(g, "slot", "tab");
+                        launchGame(g, "slot", "modal");
                       } else {
                         handleLoginClick();
                       }
@@ -511,7 +550,7 @@ const Casino = () => {
                         mobileShowMore={mobileShowMore}
                         onGameClick={(g) => {
                           if (isLogin) {
-                            launchGame(g, "slot", "tab");
+                            launchGame(g, "slot", "modal");
                           } else {
                             handleLoginClick();
                           }
@@ -555,7 +594,7 @@ const Casino = () => {
                         }
                         onGameClick={(g) => {
                           if (isLogin) {
-                            launchGame(g, "slot", "tab");
+                            launchGame(g, "slot", "modal");
                           } else {
                             handleLoginClick();
                           }

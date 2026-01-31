@@ -45,7 +45,7 @@ const Login = () => {
             updateSession(result);
 
             setTimeout(() => {
-                navigate("/");
+                navigate(-1);
             }, 1000);
         } else if (result.status === "country") {
             setErrorMsg(result.message);
