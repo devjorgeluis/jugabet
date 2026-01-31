@@ -30,7 +30,7 @@ const SearchInput = () => {
 
     const { contextData } = useContext(AppContext);
 
-const handleChange = (event) => {
+    const handleChange = (event) => {
         const value = event.target.value;
         setTxtSearch(value);
         if (typeof search === 'function') search(value);
@@ -38,6 +38,10 @@ const handleChange = (event) => {
 
     const handleFocus = () => {
         setSearchFocused(true);
+    };
+
+     const handleLoginClick = () => {
+        navigate("/login");
     };
 
     const configureImageSrc = (result) => {
