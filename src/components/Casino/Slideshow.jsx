@@ -6,16 +6,17 @@ import { Navigation, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-import ImgBanner1 from "/src/assets/img/banner1.webp";
-import ImgBanner2 from "/src/assets/img/banner2.webp";
-import ImgBanner3 from "/src/assets/img/banner3.webp";
-import ImgBanner4 from "/src/assets/img/banner4.webp";
-import ImgBanner5 from "/src/assets/img/banner5.webp";
-import ImgBanner6 from "/src/assets/img/banner6.webp";
-import ImgBanner7 from "/src/assets/img/banner7.webp";
-import ImgBanner8 from "/src/assets/img/banner8.webp";
-import ImgBanner9 from "/src/assets/img/banner9.webp";
-import ImgBanner10 from "/src/assets/img/banner10.webp";
+import ImgBanner1 from "/src/assets/img/casino-banner1.webp";
+import ImgBanner2 from "/src/assets/img/casino-banner2.webp";
+import ImgBanner3 from "/src/assets/img/casino-banner3.webp";
+import ImgBanner4 from "/src/assets/img/casino-banner4.webp";
+import ImgBanner5 from "/src/assets/img/casino-banner5.webp";
+import ImgBanner6 from "/src/assets/img/casino-banner6.webp";
+import ImgBanner7 from "/src/assets/img/casino-banner7.webp";
+import ImgBanner8 from "/src/assets/img/casino-banner8.webp";
+import ImgBanner9 from "/src/assets/img/casino-banner9.webp";
+import ImgBanner10 from "/src/assets/img/casino-banner10.webp";
+import ImgBanner11 from "/src/assets/img/casino-banner11.webp";
 
 const Slideshow = () => {
   const swiperRef = useRef(null);
@@ -33,6 +34,7 @@ const Slideshow = () => {
     { id: 7, image: ImgBanner8 },
     { id: 8, image: ImgBanner9 },
     { id: 9, image: ImgBanner10 },
+    { id: 10, image: ImgBanner11 },
   ];
 
   const handleSlideChange = (swiper) => {

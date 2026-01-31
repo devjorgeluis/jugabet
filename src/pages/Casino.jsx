@@ -8,7 +8,7 @@ import Footer from "../components/Layout/Footer";
 import GameCard from "/src/components/GameCard";
 import GameModal from "../components/Modal/GameModal";
 import LoginModal from "../components/Modal/LoginModal";
-import Slideshow from "../components/Home/Slideshow";
+import Slideshow from "../components/Casino/Slideshow";
 import ProviderContainer from "../components/ProviderContainer";
 import LoadApi from "../components/Loading/LoadApi";
 import "animate.css";
