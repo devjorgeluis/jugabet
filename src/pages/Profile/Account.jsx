@@ -94,7 +94,7 @@ const Account = () => {
                         </header>
                         <ul className="list-view__layout" id="account__balance-botContainer">
                             <li className="list-view__item list-view__item--icon">
-                                <a className="list-cell" data-id="personal-data" href="/personal-data">
+                                <a className="list-cell" onClick={() => navigate("/profile/detail")}>
                                     <div className="list-cell__icon">
                                         <img src={IconProfile} alt="Profile" />
                                     </div>
