@@ -6,10 +6,10 @@ import { LayoutContext } from "./LayoutContext";
 import { callApi } from "../../utils/Utils";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import MobileFooter from "./MobileFooter";
 import LoginModal from "../Modal/LoginModal";
 import SupportModal from "../Modal/SupportModal";
 import { NavigationContext } from "./NavigationContext";
-import FullDivLoading from "../Loading/FullDivLoading";
 import GameModal from "../Modal/GameModal";
 
 const Layout = () => {
@@ -277,6 +277,20 @@ const Layout = () => {
                         </div>
                     </div>
                 </div>
+
+                {!isGameActive && (
+                    <>
+                        {isMobile && (
+                            <MobileFooter
+                                isSlotsOnly={isSlotsOnly}
+                                isLogin={isLogin}
+                                supportParent={supportParent}
+                                openSupportModal={openSupportModal}
+                                userBalance={userBalance}
+                            />
+                        )}
+                    </>
+                )}
 
                 {shouldShowGameModal && gameModalData.gameId !== null && (
                     <GameModal

@@ -190,7 +190,6 @@ const ProfileHistory = () => {
                                             <div className="content-right svelte-1pvn0xe">
                                                 <div className="info svelte-1pvn0xe">
                                                     <bdi className="amount svelte-1pvn0xe">${formatBalance(tx.amount)}</bdi>
-                                                    <div className="transaction-status svelte-1pvn0xe" style={{ color: tx.type === 'add' ? "#4076d4" : "#f33" }}>{tx.type === 'add' ? "Éxito" : "Falló"}</div>
                                                 </div>
                                                 <img src={IconArrowRight} />
                                             </div>

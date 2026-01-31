@@ -3621,7 +3621,7 @@ details summary::-webkit-details-marker {
 
 .tab__title {
     margin-inline: auto;
-    max-width: 10ch;
+    max-width: 12ch;
     min-height: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -5817,7 +5817,7 @@ svg-image::part(skeleton) {
     color: #f2008d;
     border-radius: 5px;
     padding: 0px;
-    margin-right: 10px;
+    margin-right: 0;
 }
 
 .button-support>img {
@@ -6831,13 +6831,13 @@ a {
 
 @media(max-width: 992px) {
     .game-iframe-view_gameIframeWrapper.game-iframe-view_sportbook {
-        top: 75px;
+        top: 56px;
         z-index: 999;
         height: 100% !important
     }
 
     .game-iframe-view_gameIframeWrapper.game-iframe-view_sportbook>.game-iframe-view_gameIframe {
-        height: calc(100% - 75px)
+        height: calc(100% - 56px)
     }
 }
 
@@ -8837,4 +8837,16 @@ html[dir=rtl] .info-wrapper.svelte-1pvn0xe .content-right .icon.svelte-1pvn0xe {
     letter-spacing: -.32px;
     line-height: 20px;
     text-transform: none;
+}
+
+.tab--active .tab__icon img {
+filter: 
+    brightness(0) 
+    saturate(100%) 
+    invert(79%) 
+    sepia(49%) 
+    saturate(693%) 
+    hue-rotate(26deg) 
+    brightness(92%) 
+    contrast(92%);
 }

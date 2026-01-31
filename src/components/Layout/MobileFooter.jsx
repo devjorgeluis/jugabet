@@ -3,16 +3,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LayoutContext } from "./LayoutContext";
 import { AppContext } from "../../AppContext";
 import { callApi } from "../../utils/Utils";
-import ImgCasino from "/src/assets/svg/casino.svg";
-import ImgLiveCasino from "/src/assets/svg/live-casino.svg";
-import ImgSports from "/src/assets/svg/sports.svg";
-// import ImgMobileCasino from "/src/assets/svg/mobile-casino.svg";
-// import ImgMobileLiveCasino from "/src/assets/svg/mobile-live-casino.svg";
-// import ImgMobileSports from "/src/assets/svg/mobile-sports.svg";
-import ImgProfile from "/src/assets/svg/profile.svg";
-import ImgLogout from "/src/assets/svg/logout.svg";
+import ImgCasino from "/src/assets/svg/blue-casino.svg";
+import ImgLiveCasino from "/src/assets/svg/blue-live-casino.svg";
+import ImgSports from "/src/assets/svg/blue-sports.svg";
+import ImgFooterCasino from "/src/assets/svg/casino.svg";
+import ImgFooterLiveCasino from "/src/assets/svg/live-casino.svg";
+import ImgFooterSports from "/src/assets/svg/sports.svg";
 import ImgMenu from "/src/assets/svg/menu.svg";
 import ImgClose from "/src/assets/svg/close.svg";
+import ImgPhone from "/src/assets/svg/phone.svg";
+import IconArrowDown from "/src/assets/svg/arrow-down.svg";
+import IconArrowUp from "/src/assets/svg/arrow-up.svg";
+import IconArrowRight from "/src/assets/svg/arrow-right.svg";
+import ImgCategoryHome from "/src/assets/img/lobby.webp";
+import ImgCategoryPopular from "/src/assets/img/hot.png";
+import ImgCategoryBlackjack from "/src/assets/img/joker.png";
+import ImgCategoryRoulette from "/src/assets/img/roulette.png";
+import ImgCategoryCrash from "/src/assets/img/crash.webp";
+import ImgCategoryMegaways from "/src/assets/img/megaway.png";
 
 const MobileFooter = ({
     isSlotsOnly,
@@ -22,14 +30,14 @@ const MobileFooter = ({
 }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { isSidebarExpanded, toggleSidebar, setShowMobileSearch } = useContext(LayoutContext);
+    const { isSidebarExpanded, toggleSidebar } = useContext(LayoutContext);
     const { contextData } = useContext(AppContext);
 
     const [expandedMenus, setExpandedMenus] = useState([]);
     const [liveCasinoMenus, setLiveCasinoMenus] = useState([]);
     const [hasFetchedLiveCasino, setHasFetchedLiveCasino] = useState(false);
 
-    const isLoggedIn = !!contextData?.session;
+    const showFullMenu = isSlotsOnly === "false" || isSlotsOnly === false;
 
     const toggleMenu = (menuId) => {
         setExpandedMenus((prev) =>
@@ -82,52 +90,38 @@ const MobileFooter = ({
         }
     }, [location.pathname, location.hash]);
 
-    const handleNavigation = (item) => () => {
-        if (item.action) {
-            item.action();
-        } else if (item.href !== "#") {
-            navigate(item.href);
+    const isActive = (path) => {
+        if (path === "/" && location.pathname === "/") {
+            return true;
         }
-        if (isSidebarExpanded) {
-            toggleSidebar();
-        }
+        
+        return location.pathname.startsWith(path);
     };
 
-    const isMenuActive = (item) => {
-        const currentPath = location.pathname;
-        const hash = location.hash;
-
-        if (item.href === currentPath) return true;
-        if (item.href.includes("#")) return location.pathname + location.hash === item.href;
-        if (item.id === "profile" && currentPath.startsWith("/profile")) return true;
-        return false;
+    const getActiveClass = (path) => {
+        return isActive(path) && !isSidebarExpanded ? "tab--active tab--active-route" : "";
     };
 
-    const isActiveSubmenu = (href) => {
-        if (href.includes("#")) return location.pathname + location.hash === href;
-        return location.pathname === href;
-    };
-
-    const showFullMenu = isSlotsOnly === "false" || isSlotsOnly === false;
+    const isSlotsOnlyMode = isSlotsOnly === true || isSlotsOnly === "true";
 
     const menuItems = [
-        // ... (same as before - Casino, Live Casino, Sports, Profile, Support, Logout)
         {
             id: "casino",
             name: "Casino",
             image: ImgCasino,
             href: "/casino",
             subItems: [
-                { name: "Lobby", href: "/casino#home" },
-                { name: "Hot", href: "/casino#hot" },
-                { name: "Jokers", href: "/casino#joker" },
-                { name: "Juegos de Crash", href: "/casino#arcade" },
-                { name: "Megaways", href: "/casino#megaways" },
-                { name: "Ruletas", href: "/casino#roulette" },
+                { name: "Lobby", href: "/casino#home", image: ImgCategoryHome },
+                { name: "Hot", href: "/casino#hot", image: ImgCategoryPopular },
+                { name: "Jokers", href: "/casino#joker", image: ImgCategoryBlackjack },
+                { name: "Juegos de Crash", href: "/casino#arcade", image: ImgCategoryCrash },
+                { name: "Megaways", href: "/casino#megaways", image: ImgCategoryMegaways },
+                { name: "Ruletas", href: "/casino#roulette", image: ImgCategoryRoulette },
             ],
         },
-        ...(showFullMenu
-            ? [
+        ...(isSlotsOnlyMode
+            ? []
+            : [
                 {
                     id: "live-casino",
                     name: "Casino en Vivo",
@@ -145,24 +139,7 @@ const MobileFooter = ({
                         { name: "En Vivo", href: "/live-sports" },
                     ],
                 },
-            ]
-            : []),
-        // ... Profile, Support, Logout (same as before)
-        ...(isLoggedIn
-            ? [
-                {
-                    id: "profile",
-                    name: "Cuenta",
-                    image: ImgProfile,
-                    href: "/profile",
-                    subItems: [
-                        { name: "Ajustes de Cuenta", href: "/profile/detail" },
-                        { name: "Historial de transacciones", href: "/profile/transaction" },
-                        { name: "Historial de Casino", href: "/profile/history" },
-                    ],
-                },
-            ]
-            : []),
+            ]),
         ...(supportParent
             ? [
                 {
@@ -172,7 +149,6 @@ const MobileFooter = ({
                     href: "#",
                     subItems: [],
                     action: () => {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
                         openSupportModal(true);
                     },
                 },
@@ -180,150 +156,262 @@ const MobileFooter = ({
             : []),
     ];
 
+    const handleNavigation = (item) => (e) => {
+        if (isSidebarExpanded) {
+            toggleSidebar();
+        }
+        e?.stopPropagation();
+        if (item.action) {
+            item.action();
+        } else if (item.href !== "#") {
+            navigate(item.href);
+        }
+    };
+
+    const isMenuActive = (item) => {
+        const currentPath = location.pathname;
+        const hash = location.hash;
+
+        if (item.href === currentPath) return true;
+        if (item.href.includes("#")) {
+            return location.pathname + location.hash === item.href;
+        }
+        if (item.id === "profile" && currentPath.startsWith("/profile")) return true;
+        return false;
+    };
+
+    const isActiveSubmenu = (href) => {
+        if (href.includes("#")) {
+            return location.pathname + location.hash === href;
+        }
+        return location.pathname === href;
+    };
+
+    // Render menu items from the menuItems array
+    const renderMenuItems = () => {
+        return menuItems.map((item) => {
+            const isExpanded = isMenuExpanded(item.id);
+            const isActive = isMenuActive(item);
+            const hasSubItems = item.subItems && item.subItems.length > 0;
+
+            if (!hasSubItems) {
+                return (
+                    <div
+                        key={item.id}
+                        className={`menu__item ${isActive ? 'menu__item--active' : ''}`}
+                        data-id={`menu-list-items-${item.id}`}
+                        onClick={handleNavigation(item)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="menu__list-cell list-cell list-cell--transparent">
+                            <div className="list-cell__icon">
+                                <img
+                                    src={item.image}
+                                    width="24px"
+                                    height="24px"
+                                    alt={item.name}
+                                    style={{ filter: 'var(--icon-main-filter)' }}
+                                />
+                            </div>
+                            <div className="list-cell__left">
+                                <div className="list-cell__double">
+                                    <span className="list-cell__title body-regular">
+                                        {item.name}
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="list-cell__right">
+                                <img src={IconArrowRight} alt="arrow" />
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            return (
+                <div
+                    key={item.id}
+                    className={`menu__item ${isExpanded ? 'menu__item--expanded' : ''} ${isActive ? 'menu__item--active' : ''}`}
+                    data-id={`menu-list-items-${item.id}`}
+                >
+                    <div
+                        className="menu__list-cell list-cell list-cell--transparent"
+                        onClick={() => toggleMenu(item.id)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="list-cell__icon">
+                            <img
+                                src={item.image}
+                                width="24px"
+                                height="24px"
+                                alt={item.name}
+                                style={{ filter: 'var(--icon-main-filter)' }}
+                            />
+                        </div>
+                        <div className="list-cell__left">
+                            <div className="list-cell__double">
+                                <span className="list-cell__title body-regular">
+                                    {item.name}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="list-cell__right">
+                            <img
+                                src={isExpanded ? IconArrowDown : IconArrowUp}
+                                alt={isExpanded ? "arrow-down" : "arrow-up"}
+                                className="menu__chevron"
+                            />
+                        </div>
+                    </div>
+
+                    {isExpanded && hasSubItems && (
+                        <div className="menu__expansion-panel list-view" data-id={`menu-list-${item.id}-category`}>
+                            <ul className="list-view__layout">
+                                {item.subItems.map((subItem, index) => (
+                                    <li key={`${item.id}-${index}`} className="list-view__item list-view__item--icon">
+                                        <a
+                                            href={subItem.href}
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                navigate(subItem.href);
+                                                if (isSidebarExpanded) {
+                                                    toggleSidebar();
+                                                }
+                                            }}
+                                            className={isActiveSubmenu(subItem.href) ? 'active' : ''}
+                                        >
+                                            <div className="list-cell list-cell--transparent">
+                                                <div className="list-cell__icon">
+                                                    {
+                                                        subItem.image &&
+                                                        <img
+                                                            src={subItem.image}
+                                                            width="24px"
+                                                            height="24px"
+                                                            alt={subItem.name}
+                                                            style={{ filter: 'var(--icon-main-filter)' }}
+                                                        />
+                                                    }
+                                                </div>
+                                                <div className="list-cell__left">
+                                                    <div className="list-cell__double">
+                                                        <span className={`list-cell__title body-regular ${isActiveSubmenu(subItem.href) ? 'active' : ''}`}>
+                                                            {subItem.name}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="list-cell__right">
+                                                    <img src={IconArrowRight} alt="arrow" />
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        });
+    };
+
     return (
         <>
             {/* Mobile Bottom Navigation */}
-            <nav className="fixed bottom-0 left-0 right-0 z-[101] flex flex-col-reverse bg-primary-900">
-                <div className="flex w-full items-end justify-between border-t border-theme-secondary/10 rounded-t-2xl py-2">
-                    {/* Casino */}
-                    <button
+            <nav className="tab-bar">
+                <ul className="tab-bar__list">
+                    <li
                         onClick={handleNavigation({ href: "/casino" })}
-                        className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
+                        className="tab-bar__item"
                     >
-                        <div className="p-1">
-                            <img src={ImgMobileCasino} alt="Casino" className="h-5 w-5" />
-                        </div>
-                        <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
-                            Casino
-                        </span>
-                    </button>
+                        <a
+                            className={`tab ${getActiveClass("/casino")}`}
+                        >
+                            <div className="tab__icon">
+                                <img src={ImgFooterCasino} alt="casino" />
+                            </div>
+                            <div className="tab__title">
+                                Casino
+                            </div>
+                        </a>
+                    </li>
 
                     {/* Live Casino & Sports */}
                     {showFullMenu && (
                         <>
-                            <button
+                            <li
                                 onClick={handleNavigation({ href: "/live-casino" })}
-                                className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
+                                className="tab-bar__item"
                             >
-                                <div className="p-1">
-                                    <img src={ImgMobileLiveCasino} alt="Casino en vivo" className="h-5 w-5" />
-                                </div>
-                                <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
-                                    Casino en vivo
-                                </span>
-                            </button>
+                                <a
+                                    className={`tab ${getActiveClass("/live-casino")}`}
+                                >
+                                    <div className="tab__icon">
+                                        <img src={ImgFooterLiveCasino} alt="casino en vivo" />
+                                    </div>
+                                    <div className="tab__title">
+                                        Casino en vivo
+                                    </div>
+                                </a>
+                            </li>
 
-                            <button
+                            <li
                                 onClick={handleNavigation({ href: "/sports" })}
-                                className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
+                                className="tab-bar__item"
                             >
-                                <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
-                                    Deportes
-                                </span>
-                            </button>
+                                <a
+                                    className={`tab ${getActiveClass("/sports")}`}
+                                >
+                                    <div className="tab__icon">
+                                        <img src={ImgFooterSports} alt="sports" />
+                                    </div>
+                                    <div className="tab__title">
+                                        Deportes
+                                    </div>
+                                </a>
+                            </li>
                         </>
                     )}
 
-                    {/* Search */}
-                    <button className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50" onClick={() => setShowMobileSearch(true)}>
-                        <div className="p-1">
-                            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="11" cy="11" r="8" />
-                                <path d="m21 21-4.35-4.35" />
-                            </svg>
-                        </div>
-                        <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
-                            Buscar
-                        </span>
-                    </button>
-
-                    {/* Divider */}
-                    <div className="h-full w-px bg-primary-50/10" />
-
-                    {/* Menu Button - Changes to Close Icon when open */}
-                    <button
+                    <li
                         onClick={toggleSidebar}
-                        className="group relative flex flex-1 flex-col items-center gap-1 px-2 py-1 text-primary-50"
+                        className="tab-bar__item"
                     >
-                        <div className="p-1">
-                            <img
-                                src={isSidebarExpanded ? ImgClose : ImgMenu}
-                                alt={isSidebarExpanded ? "Cerrar menú" : "Abrir menú"}
-                                className="h-5 w-5"
-                            />
-                        </div>
-                        <span className="truncate text-center text-[0.625rem] font-bold leading-normal opacity-50 group-hover:opacity-100 group-focus:opacity-100">
-                            Menú
-                        </span>
-                    </button>
-                </div>
+                        <a
+                            className={`tab ${isSidebarExpanded ? "tab--active tab--active-route" : ""}`}
+                        >
+                            <div className="tab__icon">
+                                <img src={ImgMenu} alt="menu" />
+                            </div>
+                            <div className="tab__title">
+                                Menú
+                            </div>
+                        </a>
+                    </li>
+                </ul>
             </nav>
 
-            {/* Mobile Sidebar Overlay */}
-            {isSidebarExpanded && (
-                <>
-                    <div className="fixed inset-0 z-40 bg-black/50" onClick={toggleSidebar} />
+            <>
+                <div className="shadow__wrapper hidden" onClick={toggleSidebar}></div>
 
-                    <aside className="bg-primary-900 text-primary-50 border-theme-secondary/10 flex h-full flex-col justify-between gap-4 border-r text-base [grid-area:_nav] fixed left-0 right-0 top-0 z-[100] max-h-[calc(100dvh-3.25rem)] min-h-[calc(100dvh-3.25rem)] lg:max-w-[15rem] w-full translate-x-0">
-                        <nav className="flex flex-col gap-2 p-4">
-                            {menuItems.map((item) => (
-                                // ... (same sidebar content as before)
-                                <div key={item.id} className="relative">
-                                    <div className="flex flex-col gap-2 rounded-2xl border border-theme-secondary/10 p-0 hover:border-theme-secondary/20 hover:bg-theme-secondary/[0.02]">
-                                        <div className="flex w-full flex-col rounded-2xl">
-                                            <div
-                                                className="flex items-center justify-between gap-2 pr-4"
-                                                {...(item.subItems.length > 0 ? { onClick: () => toggleMenu(item.id) } : {})}
-                                            >
-                                                <button
-                                                    onClick={handleNavigation(item)}
-                                                    className="flex flex-1 items-center gap-4 py-4 pl-4 text-sm font-bold"
-                                                >
-                                                    <img src={item.image} alt={item.name} className="h-5 w-5" />
-                                                    <span className="uppercase text-theme-secondary-50">{item.name}</span>
-                                                </button>
-
-                                                {item.subItems.length > 0 && (
-                                                    <svg
-                                                        className={`h-6 w-6 rounded p-1 text-theme-secondary transition-transform duration-200 bg-theme-secondary-300/10 ${isMenuExpanded(item.id) ? "rotate-180" : ""}`}
-                                                        viewBox="0 0 24 24"
-                                                        fill="none"
-                                                        stroke="currentColor"
-                                                        strokeWidth="2"
-                                                    >
-                                                        <path d="m6 9 6 6 6-6" />
-                                                    </svg>
-                                                )}
-                                            </div>
-
-                                            {item.subItems.length > 0 && isMenuExpanded(item.id) && (
-                                                <div className="pb-2">
-                                                    <div className="flex flex-col gap-1 px-2">
-                                                        {item.subItems.map((sub) => (
-                                                            <button
-                                                                key={sub.href}
-                                                                onClick={handleNavigation({ href: sub.href })}
-                                                                className={`flex w-full items-center gap-2 rounded-xl px-4 py-3 text-left text-base font-normal text-white hover:bg-theme-secondary/5 lg:text-sm ${isActiveSubmenu(sub.href) ? "bg-theme-secondary/10 text-theme-secondary" : ""}`}
-                                                            >
-                                                                <span>{sub.name}</span>
-                                                                {sub.name === "Hot" && (
-                                                                    <span className="rounded-full bg-theme-secondary px-1.5 py-0.5 text-[0.625rem] font-semibold text-dark-grey-900">
-                                                                        POPULARES
-                                                                    </span>
-                                                                )}
-                                                            </button>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </nav>
-                    </aside>
-                </>
-            )}
+                <div className={`menu ${isSidebarExpanded ? "menu--visible menu--active" : ""}`}>
+                    <header className="menu__header navigation-bar">
+                        <h2 className="navigation-bar__left title-1-semi-bold">
+                            <i18n-t t="common-dictionary:Menu">Menú</i18n-t>
+                        </h2>
+                        <button
+                            className="navigation-bar__right button"
+                            type="button"
+                            onClick={toggleSidebar}
+                        >
+                            <img src={ImgClose} alt="Close menu" />
+                        </button>
+                    </header>
+                    <div className="menu__wrapper">
+                        {renderMenuItems()}
+                    </div>
+                </div>
+            </>
         </>
     );
 };

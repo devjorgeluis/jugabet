@@ -1,7 +1,6 @@
 import { useContext, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { AppContext } from "../AppContext";
-import { LayoutContext } from "./Layout/LayoutContext";
 import { callApi } from "../utils/Utils";
 import LoadApi from "./Loading/LoadApi";
 import GameCard from "./GameCard";
@@ -15,10 +14,9 @@ let selectedGameType = null;
 let selectedGameLauncher = null;
 let selectedGameName = null;
 let selectedGameImg = null;
-let pageCurrent = 0;
 
 const SearchInput = () => {
-    const { isLogin, isMobile } = useContext(LayoutContext);
+    const { isLogin, isMobile } = useOutletContext();
     const [isSearch, setIsSearch] = useState(false);
     const [searchFocused, setSearchFocused] = useState(false);
     const [games, setGames] = useState([]);
@@ -32,12 +30,10 @@ const SearchInput = () => {
 
     const { contextData } = useContext(AppContext);
 
-    const handleChange = (event) => {
-        if (!isMobile) {
-            const value = event.target.value;
-            setTxtSearch(value);
-            search({ target: { value }, key: event.key, keyCode: event.keyCode });
-        }
+const handleChange = (event) => {
+        const value = event.target.value;
+        setTxtSearch(value);
+        if (typeof search === 'function') search(value);
     };
 
     const handleFocus = () => {
@@ -54,6 +50,8 @@ const SearchInput = () => {
     const search = (e) => {
         const keyword = typeof e === 'string' ? e : (e?.target?.value ?? '');
         setTxtSearch(keyword);
+        console.log(keyword);
+        
 
         if (typeof e === 'string') {
             do_search(keyword);
@@ -114,7 +112,6 @@ const SearchInput = () => {
     };
 
     const launchGame = (game, type, launcher) => {
-        // Only show modal when explicitly using modal launcher
         if (launcher === "modal") {
             setShouldShowGameModal(true);
         } else {
@@ -234,15 +231,18 @@ const SearchInput = () => {
             ) : <>
                 <div className="search">
                     <section className="section section--top section--cover">
-                        <header className="navigation-bar">
-                            <button className="navigation-bar__left" type="button" onClick={() => navigate("/")}>
-                                <img src={IconClose} alt="Close" />
-                            </button>
+                        {
+                            selectedGameId === null &&
+                            <header className="navigation-bar">
+                                <button className="navigation-bar__left" type="button" onClick={() => navigate("/")}>
+                                    <img src={IconClose} alt="Close" />
+                                </button>
 
-                            <h1 className="navigation-bar__center body-semi-bold">
-                                <i18n-t>Buscar</i18n-t>
-                            </h1>
-                        </header>
+                                <h1 className="navigation-bar__center body-semi-bold">
+                                    <i18n-t>Buscar</i18n-t>
+                                </h1>
+                            </header>
+                        }
                         <div className="search__wrapper">
                             <div className="search__field">
                                 <fieldset className="text-field">

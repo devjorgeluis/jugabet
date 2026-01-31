@@ -6,7 +6,6 @@ import { callApi } from "../../utils/Utils";
 import ImgCasino from "/src/assets/svg/blue-casino.svg";
 import ImgLiveCasino from "/src/assets/svg/blue-live-casino.svg";
 import ImgSports from "/src/assets/svg/blue-sports.svg";
-import ImgLogout from "/src/assets/svg/logout.svg";
 import ImgPhone from "/src/assets/svg/phone.svg";
 import IconArrowDown from "/src/assets/svg/arrow-down.svg";
 import IconArrowUp from "/src/assets/svg/arrow-up.svg";
