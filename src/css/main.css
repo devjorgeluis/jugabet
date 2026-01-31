@@ -5817,7 +5817,7 @@ svg-image::part(skeleton) {
     color: #f2008d;
     border-radius: 5px;
     padding: 0px;
-    margin-right: 0;
+    margin-right: 5px;
 }
 
 .button-support>img {
