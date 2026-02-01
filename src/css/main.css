@@ -267,6 +267,11 @@ main[role=main].loading {
         padding-bottom: 0;
     }
 
+    .layout.sport-layout {
+        grid-template-areas: "center";
+        grid-template-columns: auto;
+    }
+
     .layout__left {
         grid-area: left
     }

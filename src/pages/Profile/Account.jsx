@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AppContext } from "../../AppContext";
+import { LayoutContext } from "../../components/Layout/LayoutContext";
 import { callApi } from "../../utils/Utils";
 import LoadApi from "../../components/Loading/LoadApi";
 import IconClose from "/src/assets/svg/close.svg";
@@ -16,6 +17,7 @@ const Account = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { contextData } = useContext(AppContext);
+    const { userBalance } = useContext(LayoutContext);
 
     useEffect(() => {
         if (!contextData?.session) {
@@ -75,7 +77,7 @@ const Account = () => {
                                 <div className="list-cell__double">
                                     <i18n-t className="caption-1-regular" t="my-account-section:Total balance">Balance total</i18n-t>
                                     <bdi className="list-cell__title title-2-semi-bold">
-                                        $ {formatBalance(contextData?.session?.user?.balance)}
+                                        $ {formatBalance(userBalance || 0)}
                                     </bdi>
                                 </div>
                             </div>
@@ -116,6 +118,21 @@ const Account = () => {
                                     <div className="list-cell__left">
                                         <span className="list-cell__title body-regular">
                                             <i18n-t t="my-account-section:Payment history">Historial de pagos</i18n-t>
+                                        </span>
+                                    </div>
+                                    <div className="list-cell__right">
+                                        <img src={IconArrowRight} alt="Arrow" />
+                                    </div>
+                                </a>
+                            </li>
+                            <li className="list-view__item list-view__item--icon">
+                                <a className="list-cell" onClick={() => navigate("/profile/transaction")}>
+                                    <div className="list-cell__icon">
+                                        <img src={IconHistory} alt="History" />
+                                    </div>
+                                    <div className="list-cell__left">
+                                        <span className="list-cell__title body-regular">
+                                            <i18n-t t="my-account-section:Payment history">Historial de jugadas</i18n-t>
                                         </span>
                                     </div>
                                     <div className="list-cell__right">

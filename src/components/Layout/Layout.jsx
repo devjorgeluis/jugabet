@@ -255,26 +255,32 @@ const Layout = () => {
                 />
 
                 <div className="main">
-                    <div className="layout">
-                        <div className="layout__left">
-                            <div data-section="layout-menu">
-                                <div className="menu" id="menu">
-                                    {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
+                    <div className={`layout ${isSportsPage && "sport-layout"}`}>
+                        {
+                            !isSportsPage && 
+                            <div className="layout__left">
+                                <div data-section="layout-menu">
+                                    <div className="menu" id="menu">
+                                        {!isMobile && <Sidebar isSlotsOnly={isSlotsOnly} isMobile={isMobile} supportParent={supportParent} openSupportModal={openSupportModal} />}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                         <div className="layout__center">
                             {!shouldShowGameModal && (
                                 <Outlet context={{ isSlotsOnly, isMobile, isLogin, topGames, topArcade, topCasino, topLiveCasino, setIsGameActive }} />
                             )}
                         </div>
-                        <div className="layout__right">
-                            <div className="betslip">
-                                <div className="betslip__container">
+                        {
+                            !isSportsPage && 
+                            <div className="layout__right">
+                                <div className="betslip">
+                                    <div className="betslip__container">
 
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        }
                     </div>
                 </div>
 

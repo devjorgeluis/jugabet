@@ -184,7 +184,7 @@ const ProfileHistory = () => {
                                     <div className="wrapper svelte-1pvn0xe">
                                         <div className="info-wrapper svelte-1pvn0xe">
                                             <div className="content-left svelte-1pvn0xe">
-                                                <div className="type svelte-1pvn0xe">{tx.type === 'add' ? 'Depositar' : 'No pagado'}</div>
+                                                <div className="type svelte-1pvn0xe">{tx.type === 'add' ? 'DEPOSITO' : 'RETIRO'}</div>
                                                 <div className="description svelte-1pvn0xe">Mercado pago</div>
                                             </div>
                                             <div className="content-right svelte-1pvn0xe">
