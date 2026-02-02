@@ -189,7 +189,7 @@ const ProfileTransaction = () => {
                                     <div className="wrapper svelte-1pvn0xe">
                                         <div className="info-wrapper svelte-1pvn0xe">
                                             <div className="content-left svelte-1pvn0xe">
-                                                <div className="type svelte-1pvn0xe">{parseFloat(tx.value) > 0 ? 'DEPOSITO' : 'RETIRO'}</div>
+                                                <div className="type svelte-1pvn0xe">{parseFloat(tx.value) > 0 ? 'GANANCIA' : 'JUGADA'}</div>
                                                 <div className="description svelte-1pvn0xe">Mercado pago</div>
                                             </div>
                                             <div className="content-right svelte-1pvn0xe">
