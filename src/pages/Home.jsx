@@ -649,7 +649,7 @@ const Home = () => {
                             }}
                           />
                         )}
-                        {topCasino.length > 0 && (
+                        {topCasino.length > 0 && isSlotsOnly === "false" && (
                           <HotGameSlideshow
                             games={topCasino}
                             name="casino"
@@ -663,7 +663,7 @@ const Home = () => {
                             }}
                           />
                         )}
-                        {topLiveCasino.length > 0 && (
+                        {topLiveCasino.length > 0 && isSlotsOnly === "false" && (
                           <HotGameSlideshow
                             games={topLiveCasino}
                             name="liveCasino"
@@ -677,7 +677,7 @@ const Home = () => {
                             }}
                           />
                         )}
-                        {topArcade.length > 0 && (
+                        {topArcade.length > 0 && isSlotsOnly === "false" && (
                           <HotGameSlideshow
                             games={topArcade}
                             name="arcade"
